@@ -1,0 +1,5 @@
+/* Ámbar — captura de atajo */
+"shortcut.recording" = "Нажмите…";
+"shortcut.needs_modifier" = "Добавьте ⌘, ⌃ или ⌥";
+"a11y.shortcut.label" = "Глобальное сокращение для открытия Ámbar";
+"a11y.shortcut.hint" = "Включите и нажмите нужное сочетание. Esc отменяет.";

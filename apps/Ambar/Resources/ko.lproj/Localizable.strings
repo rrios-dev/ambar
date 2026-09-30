@@ -1,0 +1,233 @@
+/* Ámbar — 한국어 */
+
+/* 검색 */
+"search.placeholder" = "클립보드 검색…";
+"search.clear" = "검색 지우기";
+
+/* 빈 상태 */
+"empty.no_history" = "기록이 비어 있습니다";
+"empty.no_results" = "결과 없음";
+"empty.hint" = "복사하면 여기에 표시됩니다";
+
+/* 행 */
+"row.untitled" = "내용 없음";
+"row.image_dimensions" = "이미지 %lld × %lld";
+
+/* 종류 */
+"kind.text" = "텍스트";
+"kind.rich_text" = "서식 있는 텍스트";
+"kind.image" = "이미지";
+"kind.file" = "파일";
+"kind.color" = "색상";
+"kind.url" = "링크";
+
+/* 미리보기 */
+"preview.recognized_text" = "인식된 텍스트";
+"preview.recognizing" = "텍스트 인식 중…";
+
+/* 하단 단축키 */
+"hint.stop_dictation" = "중지하고 붙여넣기";
+"hint.discard_dictation" = "버리기";
+"hint.paste" = "붙여넣기";
+"hint.paste_plain" = "서식 없이";
+"hint.pin" = "고정";
+"hint.delete" = "삭제";
+
+/* 권한 */
+"permission.needed" = "붙여넣기 권한이 없습니다";
+"permission.help" = "다른 앱에 붙여넣으려면 Ámbar에 손쉬운 사용 권한이 필요합니다. 권한이 없어도 클립보드에는 복사되므로 ⌘V로 직접 붙여넣을 수 있습니다.";
+"permission.action" = "켜기";
+
+/* 동작 */
+"action.paste" = "붙여넣기";
+"action.paste_plain" = "서식 없이 붙여넣기";
+"action.pin" = "고정";
+"action.unpin" = "고정 해제";
+"action.delete" = "삭제";
+
+/* 메뉴 막대 */
+"menu.open" = "Ámbar 열기";
+"menu.pause" = "기록 일시 정지";
+"menu.recenter" = "윈도우 가운데 정렬";
+"menu.clear" = "기록 지우기…";
+"menu.settings" = "설정…";
+"menu.about" = "Ámbar에 관하여";
+"menu.quit" = "Ámbar 종료";
+"about.tagline" = "클립보드 기록 관리자.\n모든 내용은 Mac에만 남습니다.";
+
+/* 경고 */
+"alert.clear.title" = "기록을 지우시겠습니까?";
+"alert.clear.body" = "고정한 항목을 제외한 모든 항목이 삭제됩니다. 실행 취소할 수 없습니다.";
+"alert.clear.confirm" = "지우기";
+"alert.cancel" = "취소";
+
+/* 설정 */
+"settings.title" = "Ámbar 설정";
+"settings.general" = "일반";
+"settings.hotkey" = "전역 단축키";
+"settings.launch_at_login" = "로그인 시 열기";
+"settings.pause" = "클립보드 기록 일시 정지";
+
+"settings.recognition" = "텍스트 인식";
+"settings.ocr" = "이미지 속 텍스트 검색";
+"settings.ocr_help" = "복사한 이미지의 텍스트를 읽어 내용을 검색해 찾을 수 있게 합니다. 모든 처리는 이 Mac에서 이루어집니다.";
+
+"settings.retention" = "보관";
+"settings.retention.unlimited" = "기간 제한 없이 보관";
+"settings.storage.unlimited" = "용량 제한 없음";
+"settings.storage.limit" = "최대 %.1f GB";
+"settings.storage.current" = "현재 사용량";
+"settings.purge_now" = "지금 정리";
+
+"settings.privacy" = "개인정보 보호";
+"settings.privacy_help" = "이 앱들에서 복사한 내용은 저장하지 않습니다. 암호 관리자처럼 출처가 기밀로 표시한 내용도 무시합니다.";
+"settings.add_bundle" = "com.example.app";
+"settings.add" = "추가";
+
+"settings.permissions" = "권한";
+"settings.accessibility.granted" = "손쉬운 사용 권한 허용됨";
+"settings.accessibility.missing" = "손쉬운 사용 권한이 없습니다";
+"settings.open_settings" = "설정 열기";
+"settings.accessibility_help" = "이 권한은 직전에 사용하던 앱에 ⌘V를 보내는 데에만 쓰입니다. 없어도 Ámbar는 동작합니다. 항목이 복사되므로 직접 붙여넣으면 됩니다.";
+
+/* 오류 */
+"error.store_open" = "기록을 열 수 없습니다: %@";
+"error.dismiss" = "경고 닫기";
+
+/* 손쉬운 사용 — VoiceOver */
+"a11y.search.label" = "클립보드 기록 검색";
+"a11y.search.hint" = "입력하면 필터링됩니다. img 콜론, file 콜론, app 콜론으로 종류나 출처를 좁힐 수 있습니다.";
+"a11y.list.label" = "클립보드 기록";
+"a11y.row.hint" = "Return을 눌러 붙여넣기, Command Return으로 서식 없이 붙여넣기";
+"a11y.row.pinned" = "고정됨";
+"a11y.preview.image" = "복사한 이미지 미리보기";
+"a11y.preview.color" = "색상 %@";
+
+"preview.truncated" = "…(처음 %lld자만 표시합니다. 붙여넣으면 전체 텍스트가 복사됩니다)";
+"error.too_large" = "기록에 저장하기에는 너무 큽니다: %1$@이(가) %2$@ 제한을 초과했습니다. 클립보드에는 그대로 있으니 ⌘V로 붙여넣으세요.";
+
+// Dictado por voz
+"dictation.source_name" = "음성 입력";
+"dictation.state.arming" = "길게 눌러 시작";
+"dictation.state.preparing" = "준비 중…";
+"dictation.state.listening" = "듣고 있음";
+"dictation.state.finalizing" = "마무리 중…";
+"dictation.state.delivered" = "완료";
+"dictation.state.failed" = "음성 입력에 실패했습니다";
+"dictation.status.listening" = "Ámbar가 듣고 있습니다";
+"settings.dictation" = "음성 입력";
+"settings.dictation.enabled" = "목소리로 입력하기";
+"settings.dictation.help" = "기록 단축키를 길게 눌러 받아쓰기를 시작합니다. 손을 떼도 계속 녹음됩니다. ⏎로 중지, ⌘⌫로 버리기, 또는 패널의 버튼을 사용하세요.";
+"settings.dictation.atypical" = "비정형 발화";
+"settings.dictation.atypical_help" = "일반 음성 입력이 잘 인식하지 못하는 목소리를 위해 Apple의 손쉬운 사용 모델을 사용합니다. 필요할 때만 켜세요. 인식 방식이 바뀝니다.";
+"settings.dictation.measure" = "이 Mac 측정";
+"settings.dictation.measure_help" = "테스트 문장을 변환해 이 Mac이 실시간으로 말을 따라갈 수 있는지 확인합니다. 몇 초 걸립니다.";
+"settings.dictation.measuring" = "측정 중…";
+"dictation.measure.failed" = "측정할 수 없습니다. 나중에 다시 시도하세요.";
+"settings.dictation.mode" = "모드";
+"settings.dictation.mode.live" = "실시간";
+"settings.dictation.mode.deferred" = "끝난 후";
+"settings.dictionary" = "개인 사전";
+"settings.dictionary.learning" = "내 수정에서 학습";
+"settings.dictionary.learning_help" = "받아쓰기 중 단어를 수정하면 여기에 저장되어 이후 인식에 반영됩니다.";
+"settings.dictionary.empty" = "아직 용어가 없습니다. 받아쓰기 중 단어를 수정하면 여기에 표시됩니다.";
+"settings.dictionary.heard_as" = "“%@”(으)로 인식됨";
+"settings.dictionary.delete" = "“%@” 삭제";
+"settings.dictionary.add.written" = "단어 또는 이름";
+"settings.dictionary.add.heard" = "엔진이 듣는 방식 (선택 사항)";
+"settings.dictionary.add.confirm" = "추가";
+"dictation.learned" = "“%@” 학습됨";
+"dictation.learned.undo" = "실행 취소";
+"dictation.transcript.hint" = "단어를 두 번 클릭하여 수정";
+"dictation.transcript.correct" = "수정";
+"dictation.transcript.expand" = "전체 보기 및 수정";
+"dictation.transcript.collapse" = "접기";
+"dictation.stop" = "중지";
+"dictation.start" = "음성 입력";
+"dictation.state.truncated" = "완료(끝부분이 빠졌을 수 있음)";
+"dictation.open_settings" = "설정 열기";
+"dictation.model.needed" = "사용 중인 언어의 음성 모델이 설치되지 않았습니다.";
+"dictation.model.install" = "설치";
+"dictation.model.installing" = "모델 설치 중…";
+"dictation.model.installed.announcement" = "모델이 설치되었습니다"; // Solo para VoiceOver, no se pinta.
+"dictation.tight" = "이 Mac은 실시간 음성 입력에 성능이 빠듯합니다. ‘말을 마친 뒤’ 모드를 권장합니다.";
+"dictation.unavailable.locale" = "음성 입력이 사용 중인 언어를 지원하지 않습니다.";
+"dictation.unavailable.no_mic" = "사용할 수 있는 마이크가 없습니다.";
+"dictation.unavailable.denied" = "Ámbar에 마이크 사용 권한이 없습니다.";
+"menu.pause_for" = "일시 중지 시간…";
+"menu.pause_15m" = "15분";
+"menu.pause_1h" = "1시간";
+"menu.pause_until_resumed" = "다시 시작할 때까지";
+"menu.pause_remaining" = "일시 중지 %lld분 남음";
+"dictation.failed.permission" = "Ámbar에 마이크 권한이 없습니다.";
+"dictation.failed.model" = "음성 모델이 없습니다.";
+"dictation.failed.device" = "음성 입력 중에 마이크가 바뀌었습니다.";
+"dictation.discard" = "버리기";
+"dictation.failed.no_speech" = "아무 소리도 들리지 않았습니다. 마이크를 확인한 뒤 다시 시도하세요.";
+"panel.pause.resume" = "재개";
+"panel.pause.indefinite" = "기록 일시 중지됨";
+"history.resumed.announcement" = "기록이 재개되었습니다"; // Solo para VoiceOver, no se pinta.
+"history.pause_expired.announcement" = "기록 일시 중지가 종료되었습니다"; // Solo para VoiceOver, no se pinta.
+"panel.pause.remaining" = "기록 일시 중지됨 · %lld분";
+"dictation.failed.quota" = "다른 앱이 시스템의 받아쓰기 슬롯을 사용하고 있습니다. 해당 앱을 종료한 후 다시 시도하십시오.";
+"settings.dictation.hold" = "단축키를 길게 눌러 시작";
+"settings.dictation.hold_help" = "고정 키를 사용한다면 끄세요. 시스템이 조합 키를 눌린 상태로 유지해 음성 입력이 저절로 시작됩니다. 버튼과 ⌘D는 계속 작동합니다.";
+"dictation.failed.time_limit" = "시간 제한으로 종료되어 음성 입력을 버렸습니다.";
+"dictation.model.failed" = "모델을 설치할 수 없습니다. 연결을 확인하세요.";
+"dictation.open_app_settings" = "Ámbar 설정 열기";
+"dictation.model.needed_size" = "사용 중인 언어의 음성 모델이 설치되지 않았습니다(%@).";
+"dictation.start.hint" = "Command + D";
+
+/* 첫 실행 소개 */
+"onboarding.title" = "환영합니다";
+"onboarding.progress" = "%1$lld / %2$lld";
+"a11y.onboarding.progress" = "%2$lld단계 중 %1$lld단계";
+"onboarding.back" = "이전";
+"onboarding.continue" = "계속";
+"onboarding.finish" = "Ámbar 사용 시작";
+"onboarding.replay" = "소개 다시 보기";
+"onboarding.welcome.title" = "Ámbar는 복사한 것을 남겨 둡니다";
+"onboarding.welcome.body" = "텍스트, 이미지, 파일, 색상을 단축키 하나로 꺼냅니다.";
+"onboarding.welcome.point.history" = "잊지 않는 기록";
+"onboarding.welcome.point.history_detail" = "목록에는 축소판, 미리보기에는 이미지 전체를 보여줍니다.";
+"onboarding.welcome.point.search" = "이미지 속 글자까지 검색";
+"onboarding.welcome.point.search_detail" = "청구서를 복사하면 '청구서'로 찾을 수 있습니다.";
+"onboarding.welcome.point.private" = "Mac 밖으로 나가지 않습니다";
+"onboarding.welcome.point.private_detail" = "서버도, 계정도, 연결도 없습니다.";
+"onboarding.location.title" = "응용 프로그램 폴더에 두기";
+"onboarding.location.body.copy" = "Ámbar가 디스크 이미지에서 실행되고 있습니다. 권한을 허용하기 전에 응용 프로그램 폴더로 복사하십시오. 권한은 이 사본에 부여되므로 나중에 옮기면 사라집니다.";
+"onboarding.location.body.move" = "Ámbar가 응용 프로그램 폴더에 없습니다. 지금 옮기십시오. 권한은 이 사본에 부여되므로 나중에 옮기면 사라집니다.";
+"onboarding.location.move" = "응용 프로그램으로 이동";
+"onboarding.location.copy" = "응용 프로그램으로 복사";
+"onboarding.location.exists" = "응용 프로그램 폴더에 이미 Ámbar 사본이 있습니다.";
+"onboarding.location.replace" = "기존 사본 대치";
+"onboarding.location.failed" = "실패했습니다: %@. 직접 응용 프로그램 폴더로 끌어다 놓고 거기서 열어 주십시오.";
+"onboarding.location.done" = "완료했습니다. Ámbar가 응용 프로그램 폴더에서 다시 열립니다.";
+"onboarding.accessibility.title" = "붙여넣기를 맡기기";
+"onboarding.accessibility.body" = "이 권한이 없으면 Ámbar는 클립보드에 복사하고 ⌘V로 직접 붙여넣습니다. 허용하면 ↵로 직전에 사용하던 앱에 바로 붙여넣습니다.";
+"permission.grant" = "권한 허용";
+"onboarding.accessibility.waiting" = "기다리는 중… 개인정보 보호 및 보안 → 손쉬운 사용에서 켜 주십시오.";
+"onboarding.accessibility.granted" = "허용되었습니다. ↵로 직전에 사용하던 앱에 붙여넣습니다.";
+"onboarding.accessibility.optional" = "허용하지 않아도 계속할 수 있습니다. Ámbar는 그대로 동작하고, 붙여넣기만 직접 하면 됩니다.";
+"onboarding.invocation.title" = "여는 방법";
+"onboarding.invocation.body" = "기록을 앞으로 가져오는 단축키입니다. 이미 쓰는 것과 겹치면(Pages와 Word에서 ⌘⇧V는 '붙여넣고 스타일 일치'입니다) 여기서 바꾸십시오.";
+"onboarding.invocation.login_help" = "Ámbar는 메뉴 바에 있으며 Dock에는 아이콘이 없습니다.";
+"onboarding.extras.title" = "선택 사항 두 가지";
+"onboarding.extras.body" = "둘 다 대가가 있으므로 기본으로 켜지 않고 여쭙습니다. 설정에서 언제든 바꿀 수 있습니다.";
+"onboarding.finish.title" = "다 됐습니다";
+"onboarding.finish.body" = "복사한 것을 되찾고 싶을 때 %@를 누르십시오.";
+"onboarding.finish.settings_hint" = "나머지(보관 기간, 제외할 앱, 텍스트 인식)는 메뉴 바의 설정에 있습니다.";
+
+/* 전역 단축키를 쓸 수 없을 때 */
+"hotkey.unavailable" = "이 단축키는 다른 앱(또는 Ámbar의 다른 사본)이 이미 사용 중이어서 반응하지 않습니다. 다른 단축키를 선택하십시오.";
+
+/* 마이크 권한을 요청하지 않은 경우 */
+"dictation.microphone_needed" = "Ámbar가 아직 마이크 권한을 요청하지 않았습니다.";
+"dictation.microphone.grant" = "요청";
+
+/* 자동 붙여넣기를 보내지 못한 경우 */
+"paste.failed" = "자동으로 붙여넣지 못했습니다. 클립보드에 있으니 ⌘V로 붙여넣으십시오. 방금 권한을 허용했다면 Ámbar를 다시 실행하십시오.";
+
+/* 권한 허용 후 다시 실행 */
+"permission.restart_needed" = "Ámbar가 실행 중일 때 권한을 허용했습니다. 자동 붙여넣기가 작동하려면 앱을 다시 실행하십시오.";
+"permission.restart" = "다시 실행";

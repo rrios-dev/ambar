@@ -1,0 +1,44 @@
+# Cadenas que coinciden con el español a propósito.
+#
+# El detector de `untranslated.py` marca cualquier valor idéntico al del idioma de
+# referencia, porque así es como se cuela una traducción a medias: se copia el fichero
+# para empezar y no se termina. Pero hay coincidencias legítimas —el español y el
+# portugués comparten muchísimo, y «Color» o «General» se escriben igual en inglés—, y
+# marcarlas convertiría el control en ruido que se acaba ignorando.
+#
+# La versión anterior las tapaba con un umbral de 20 caracteres. Funcionaba, y era un
+# punto ciego: 14 de las 32 claves del dictado quedaban fuera de la comprobación sin que
+# nadie lo viera. Ahora la excepción es esta lista, que alguien ha mirado una por una.
+#
+# Formato: <idioma><TAB><clave>. Una entrada nueva exige mirar la cadena y decidir; el
+# detector falla hasta que se añada, que es justo lo que se quiere.
+#
+# Revisadas el 2026-08-14 contra el inventario completo: las 18 primeras son cognados reales.
+#
+# 2026-08-17 (bis) — «Reiniciar» se escribe igual en español y en portugués.
+#
+# 2026-08-17 — dos más, de la presentación de primer uso. «Continuar» se escribe igual en
+# español y en portugués, y el formato del progreso —«3 de 6»— también coincide palabra por
+# palabra: el portugués usa la misma preposición.
+
+en	a11y.preview.color
+en	kind.color
+en	settings.general
+it	dictation.start.hint
+pt-BR	alert.cancel
+pt-BR	dictation.discard
+pt-BR	dictation.model.install
+pt-BR	dictation.model.installed.announcement
+pt-BR	dictation.open_settings
+pt-BR	dictation.start.hint
+pt-BR	dictation.state.preparing
+pt-BR	hint.discard_dictation
+pt-BR	kind.text
+pt-BR	menu.pause
+pt-BR	menu.pause_15m
+pt-BR	menu.pause_1h
+pt-BR	menu.settings
+pt-BR	settings.dictation.mode
+pt-BR	onboarding.continue
+pt-BR	onboarding.progress
+pt-BR	permission.restart

@@ -1,0 +1,5 @@
+/* Ámbar — captura de atajo */
+"shortcut.recording" = "Drücken…";
+"shortcut.needs_modifier" = "Füge ⌘, ⌃ oder ⌥ hinzu";
+"a11y.shortcut.label" = "Globaler Kurzbefehl zum Öffnen von Ámbar";
+"a11y.shortcut.hint" = "Aktiviere ihn und drücke die gewünschte Kombination. Esc bricht ab.";

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- La gota, con su inclusión: lo que la resina atrapó y conserva intacto.
+       Mismo dibujo que la marca de la web (apps/hydra/app/icon.svg). -->
+  <defs>
+    <linearGradient id="resina" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#FFD79A"/>
+      <stop offset="0.45" stop-color="#F5A524"/>
+      <stop offset="1" stop-color="#A1560A"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(256 232) scale(16)">
+    <path d="M16 2.6c4.1 7.2 10 11.1 10 17.2a10 10 0 1 1-20 0C6 13.7 11.9 9.8 16 2.6Z" fill="url(#resina)"/>
+    <ellipse cx="16.6" cy="20.6" rx="3" ry="2.3" transform="rotate(-18 16.6 20.6)" fill="#21100A" opacity="0.5"/>
+    <ellipse cx="12.3" cy="15.6" rx="2.2" ry="3.3" transform="rotate(-28 12.3 15.6)" fill="#FFF7ED" opacity="0.34"/>
+  </g>
+</svg>

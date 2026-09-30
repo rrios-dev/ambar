@@ -1,0 +1,234 @@
+/* Ámbar — русский */
+
+/* Поиск */
+"search.placeholder" = "Поиск в буфере обмена…";
+"search.clear" = "Очистить поиск";
+
+/* Пустое состояние */
+"empty.no_history" = "История пуста";
+"empty.no_results" = "Ничего не найдено";
+"empty.hint" = "Скопируйте что-нибудь — оно появится здесь";
+
+/* Строки */
+"row.untitled" = "Нет содержимого";
+"row.image_dimensions" = "Изображение %lld × %lld";
+
+/* Типы */
+"kind.text" = "Текст";
+"kind.rich_text" = "Форматированный текст";
+"kind.image" = "Изображение";
+"kind.file" = "Файл";
+"kind.color" = "Цвет";
+"kind.url" = "Ссылка";
+
+/* Просмотр */
+"preview.recognized_text" = "Распознанный текст";
+"preview.recognizing" = "Распознавание текста…";
+
+/* Сокращения внизу */
+"hint.stop_dictation" = "Остановить и вставить";
+"hint.discard_dictation" = "Отменить";
+"hint.paste" = "Вставить";
+"hint.paste_plain" = "Без форматирования";
+"hint.pin" = "Закрепить";
+"hint.delete" = "Удалить";
+
+/* Разрешения */
+"permission.needed" = "Нет разрешения на вставку";
+"permission.help" = "Для вставки в другие приложения Ámbar нужен доступ к Универсальному доступу. Без него содержимое всё равно копируется в буфер обмена, и вы вставляете его сами через ⌘V.";
+"permission.action" = "Включить";
+
+/* Действия */
+"action.paste" = "Вставить";
+"action.paste_plain" = "Вставить без форматирования";
+"action.pin" = "Закрепить";
+"action.unpin" = "Открепить";
+"action.delete" = "Удалить";
+
+/* Строка меню */
+"menu.open" = "Открыть Ámbar";
+"menu.pause" = "Приостановить запись";
+"menu.recenter" = "Разместить окно по центру";
+"menu.clear" = "Очистить историю…";
+"menu.settings" = "Настройки…";
+"menu.about" = "Об Ámbar";
+"menu.quit" = "Завершить Ámbar";
+"about.tagline" = "Менеджер истории буфера обмена.\nВсё остаётся на вашем Mac.";
+
+/* Предупреждения */
+"alert.clear.title" = "Очистить историю?";
+"alert.clear.body" = "Будут удалены все записи, кроме закреплённых. Это действие нельзя отменить.";
+"alert.clear.confirm" = "Очистить";
+"alert.cancel" = "Отменить";
+
+/* Настройки */
+"settings.title" = "Настройки Ámbar";
+"settings.general" = "Основные";
+"settings.hotkey" = "Глобальное сокращение";
+"settings.launch_at_login" = "Открывать при входе";
+"settings.pause" = "Приостановить запись буфера обмена";
+
+"settings.recognition" = "Распознавание текста";
+"settings.ocr" = "Искать текст внутри изображений";
+"settings.ocr_help" = "Ámbar читает текст на каждом скопированном изображении, чтобы вы могли найти его по содержимому. Всё происходит на вашем Mac.";
+
+"settings.retention" = "Хранение";
+"settings.retention.unlimited" = "Хранить без ограничения по времени";
+"settings.storage.unlimited" = "Без ограничения по размеру";
+"settings.storage.limit" = "Не более %.1f ГБ";
+"settings.storage.current" = "Занято сейчас";
+"settings.purge_now" = "Очистить сейчас";
+
+/* Конфиденциальность */
+"settings.privacy" = "Конфиденциальность";
+"settings.privacy_help" = "Ámbar никогда не сохраняет скопированное из этих приложений. Он также игнорирует любое содержимое, помеченное источником как конфиденциальное, — так делают менеджеры паролей.";
+"settings.add_bundle" = "com.example.app";
+"settings.add" = "Добавить";
+
+"settings.permissions" = "Разрешения";
+"settings.accessibility.granted" = "Универсальный доступ разрешён";
+"settings.accessibility.missing" = "Нет доступа к Универсальному доступу";
+"settings.open_settings" = "Открыть Настройки";
+"settings.accessibility_help" = "Это разрешение нужно только для отправки ⌘V в приложение, где вы были. Без него Ámbar тоже работает: запись копируется, а вставляете вы сами.";
+
+/* Ошибки */
+"error.store_open" = "Не удалось открыть историю: %@";
+"error.dismiss" = "Скрыть предупреждение";
+
+/* Универсальный доступ — VoiceOver */
+"a11y.search.label" = "Поиск в истории буфера обмена";
+"a11y.search.hint" = "Начните вводить для фильтрации. Используйте img двоеточие, file двоеточие или app двоеточие, чтобы сузить по типу или источнику.";
+"a11y.list.label" = "История буфера обмена";
+"a11y.row.hint" = "Нажмите Return, чтобы вставить, Command Return — чтобы вставить без форматирования";
+"a11y.row.pinned" = "закреплено";
+"a11y.preview.image" = "Просмотр скопированного изображения";
+"a11y.preview.color" = "Цвет %@";
+
+"preview.truncated" = "… (показаны первые %lld символов; при вставке копируется весь текст)";
+"error.too_large" = "Слишком большой объём для истории: %1$@ превышает предел %2$@. Содержимое осталось в буфере обмена — вставьте его через ⌘V.";
+
+// Dictado por voz
+"dictation.source_name" = "Диктовка";
+"dictation.state.arming" = "Удерживайте, чтобы начать";
+"dictation.state.preparing" = "Подготовка…";
+"dictation.state.listening" = "Слушаю";
+"dictation.state.finalizing" = "Завершение…";
+"dictation.state.delivered" = "Готово";
+"dictation.state.failed" = "Не удалось надиктовать";
+"dictation.status.listening" = "Ámbar слушает";
+"settings.dictation" = "Голосовая диктовка";
+"settings.dictation.enabled" = "Диктовать голосом";
+"settings.dictation.help" = "Удерживайте сочетание клавиш истории, чтобы начать диктовку. Можно отпустить — запись продолжится. ⏎ — остановить, ⌘⌫ — отменить, либо кнопки на панели.";
+"settings.dictation.atypical" = "Атипичная речь";
+"settings.dictation.atypical_help" = "Использует модель универсального доступа Apple для голосов, которые обычная диктовка распознаёт хуже. Включайте только при необходимости: распознавание изменится.";
+"settings.dictation.measure" = "Проверить этот Mac";
+"settings.dictation.measure_help" = "Распознаёт тестовую фразу, чтобы узнать, успевает ли Mac за речью в реальном времени. Займёт несколько секунд.";
+"settings.dictation.measuring" = "Измерение…";
+"dictation.measure.failed" = "Не удалось измерить. Попробуйте позже.";
+"settings.dictation.mode" = "Режим";
+"settings.dictation.mode.live" = "В реальном времени";
+"settings.dictation.mode.deferred" = "По окончании";
+"settings.dictionary" = "Личный словарь";
+"settings.dictionary.learning" = "Учиться на моих исправлениях";
+"settings.dictionary.learning_help" = "Когда вы исправляете слово во время диктовки, оно сохраняется здесь и улучшает распознавание.";
+"settings.dictionary.empty" = "Терминов пока нет. Исправьте слово во время диктовки, и оно появится здесь.";
+"settings.dictionary.heard_as" = "услышано как %@";
+"settings.dictionary.delete" = "Удалить «%@»";
+"settings.dictionary.add.written" = "Слово или имя";
+"settings.dictionary.add.heard" = "Как его слышит движок (необязательно)";
+"settings.dictionary.add.confirm" = "Добавить";
+"dictation.learned" = "Выучено «%@»";
+"dictation.learned.undo" = "Отменить";
+"dictation.transcript.hint" = "Дважды щёлкните слово, чтобы исправить";
+"dictation.transcript.correct" = "Исправить";
+"dictation.transcript.expand" = "Показать всё и исправить";
+"dictation.transcript.collapse" = "Свернуть";
+"dictation.stop" = "Остановить";
+"dictation.start" = "Диктовать";
+"dictation.state.truncated" = "Готово (окончание может отсутствовать)";
+"dictation.open_settings" = "Открыть настройки";
+"dictation.model.needed" = "Голосовая модель для вашего языка не установлена.";
+"dictation.model.install" = "Установить";
+"dictation.model.installing" = "Установка модели…";
+"dictation.model.installed.announcement" = "Модель установлена"; // Solo para VoiceOver, no se pinta.
+"dictation.tight" = "Этому Mac не хватает мощности для диктовки в реальном времени. Рекомендуется режим «После речи».";
+"dictation.unavailable.locale" = "Диктовка не поддерживает ваш язык.";
+"dictation.unavailable.no_mic" = "Микрофон недоступен.";
+"dictation.unavailable.denied" = "У Ámbar нет разрешения на использование микрофона.";
+"menu.pause_for" = "Приостановить на…";
+"menu.pause_15m" = "15 минут";
+"menu.pause_1h" = "1 час";
+"menu.pause_until_resumed" = "Пока не возобновлю";
+"menu.pause_remaining" = "Осталось %lld мин паузы";
+"dictation.failed.permission" = "У Ámbar нет доступа к микрофону.";
+"dictation.failed.model" = "Отсутствует голосовая модель.";
+"dictation.failed.device" = "Микрофон сменился во время диктовки.";
+"dictation.discard" = "Отменить";
+"dictation.failed.no_speech" = "Ничего не слышно. Проверьте микрофон и повторите попытку.";
+"panel.pause.resume" = "Возобновить";
+"panel.pause.indefinite" = "История приостановлена";
+"history.resumed.announcement" = "История возобновлена"; // Solo para VoiceOver, no se pinta.
+"history.pause_expired.announcement" = "Пауза истории завершена"; // Solo para VoiceOver, no se pinta.
+"panel.pause.remaining" = "История приостановлена · %lld мин";
+"dictation.failed.quota" = "Слоты диктовки системы занимает другое приложение. Закройте его и повторите попытку.";
+"settings.dictation.hold" = "Запускать удержанием сочетания";
+"settings.dictation.hold_help" = "Отключите, если используете залипание клавиш: система оставляет модификаторы нажатыми и диктовка запустится сама. Кнопка и ⌘D продолжат работать.";
+"dictation.failed.time_limit" = "Закрыто по времени; диктовка отменена.";
+"dictation.model.failed" = "Не удалось установить модель. Проверьте подключение.";
+"dictation.open_app_settings" = "Открыть настройки Ámbar";
+"dictation.model.needed_size" = "Голосовая модель для вашего языка не установлена (%@).";
+"dictation.start.hint" = "Command + D";
+
+/* Знакомство при первом запуске */
+"onboarding.title" = "Добро пожаловать";
+"onboarding.progress" = "%1$lld из %2$lld";
+"a11y.onboarding.progress" = "Шаг %1$lld из %2$lld";
+"onboarding.back" = "Назад";
+"onboarding.continue" = "Продолжить";
+"onboarding.finish" = "Начать работу с Ámbar";
+"onboarding.replay" = "Показать знакомство снова";
+"onboarding.welcome.title" = "Ámbar сохраняет то, что вы копируете";
+"onboarding.welcome.body" = "Текст, изображения, файлы и цвета — в одном сокращении.";
+"onboarding.welcome.point.history" = "История, которая не забывает";
+"onboarding.welcome.point.history_detail" = "Миниатюры в списке, целое изображение в просмотре.";
+"onboarding.welcome.point.search" = "Поиск даже внутри изображений";
+"onboarding.welcome.point.search_detail" = "Скопируйте счёт и найдите его по слову «счёт».";
+"onboarding.welcome.point.private" = "Ничего не покидает ваш Mac";
+"onboarding.welcome.point.private_detail" = "Ни сервера, ни учётной записи, ни подключения.";
+"onboarding.location.title" = "Перенесите в «Приложения»";
+"onboarding.location.body.copy" = "Ámbar запущен из образа диска. Скопируйте его в «Приложения» до того, как выдавать разрешения: разрешения выдаются именно этой копии, и перемещение после этого их теряет.";
+"onboarding.location.body.move" = "Ámbar находится не в папке «Приложения». Перенесите его сейчас: разрешения выдаются именно этой копии, и перемещение позже их теряет.";
+"onboarding.location.move" = "Переместить в «Приложения»";
+"onboarding.location.copy" = "Скопировать в «Приложения»";
+"onboarding.location.exists" = "В «Приложениях» уже есть копия Ámbar.";
+"onboarding.location.replace" = "Заменить существующую копию";
+"onboarding.location.failed" = "Не получилось: %@. Перетащите его в «Приложения» сами и откройте оттуда.";
+"onboarding.location.done" = "Готово. Ámbar откроется снова из «Приложений».";
+"onboarding.accessibility.title" = "Пусть вставляет за вас";
+"onboarding.accessibility.body" = "Без этого разрешения Ámbar копирует в буфер обмена, а вставляете вы сами через ⌘V. С ним ↵ вставляет прямо в приложение, где вы были.";
+"permission.grant" = "Выдать разрешение";
+"onboarding.accessibility.waiting" = "Ожидание… включите его в «Конфиденциальность и безопасность» → «Универсальный доступ».";
+"onboarding.accessibility.granted" = "Выдано. ↵ будет вставлять в приложение, где вы были.";
+"onboarding.accessibility.optional" = "Можно продолжить и без него: Ámbar работает так же, просто вставляете вы.";
+"onboarding.invocation.title" = "Как открывается";
+"onboarding.invocation.body" = "Это сокращение выводит историю на передний план. Если оно конфликтует с тем, что вы уже используете — в Pages и Word ⌘⇧V означает «вставить и согласовать стиль», — измените его здесь.";
+"onboarding.invocation.login_help" = "Ámbar живёт в строке меню, без значка в Dock.";
+"onboarding.extras.title" = "Две необязательные вещи";
+"onboarding.extras.body" = "Обе чего-то стоят, поэтому о них спрашивают, а не включают заранее. Их можно изменить в любой момент в настройках.";
+"onboarding.finish.title" = "Готово";
+"onboarding.finish.body" = "Нажмите %@, когда захотите вернуть что-то скопированное.";
+"onboarding.finish.settings_hint" = "Остальное — срок хранения, исключённые приложения, распознавание текста — в настройках, из строки меню.";
+
+/* Глобальное сокращение недоступно */
+"hotkey.unavailable" = "Это сокращение уже занято другим приложением —или другой копией Ámbar—, поэтому не срабатывает. Выберите другое.";
+
+/* Доступ к микрофону не запрошен */
+"dictation.microphone_needed" = "Ámbar ещё не запрашивал доступ к микрофону.";
+"dictation.microphone.grant" = "Запросить";
+
+/* Автоматическая вставка не отправилась */
+"paste.failed" = "Не удалось вставить автоматически. Содержимое в буфере обмена: вставьте через ⌘V. Если вы только что выдали разрешение, перезапустите Ámbar.";
+
+/* Перезапуск после выдачи разрешения */
+"permission.restart_needed" = "Вы выдали разрешение при запущенном Ámbar. Перезапустите приложение, чтобы автоматическая вставка заработала.";
+"permission.restart" = "Перезапустить";

@@ -1,0 +1,5 @@
+/* Ámbar — captura de atajo */
+"shortcut.recording" = "请按键…";
+"shortcut.needs_modifier" = "请加上 ⌘、⌃ 或 ⌥";
+"a11y.shortcut.label" = "打开 Ámbar 的全局快捷键";
+"a11y.shortcut.hint" = "开启后按下你想要的组合键。Esc 可取消。";

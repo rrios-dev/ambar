@@ -1,0 +1,233 @@
+/* Ámbar — 日本語 */
+
+/* 検索 */
+"search.placeholder" = "クリップボードを検索…";
+"search.clear" = "検索をクリア";
+
+/* 空の状態 */
+"empty.no_history" = "履歴がありません";
+"empty.no_results" = "結果がありません";
+"empty.hint" = "コピーするとここに表示されます";
+
+/* 行 */
+"row.untitled" = "内容なし";
+"row.image_dimensions" = "画像 %lld × %lld";
+
+/* 種類 */
+"kind.text" = "テキスト";
+"kind.rich_text" = "リッチテキスト";
+"kind.image" = "画像";
+"kind.file" = "ファイル";
+"kind.color" = "カラー";
+"kind.url" = "リンク";
+
+/* プレビュー */
+"preview.recognized_text" = "認識されたテキスト";
+"preview.recognizing" = "テキストを認識中…";
+
+/* フッターのショートカット */
+"hint.stop_dictation" = "停止して貼り付け";
+"hint.discard_dictation" = "破棄";
+"hint.paste" = "ペースト";
+"hint.paste_plain" = "書式なし";
+"hint.pin" = "ピン留め";
+"hint.delete" = "削除";
+
+/* アクセス権 */
+"permission.needed" = "ペーストの許可がありません";
+"permission.help" = "他のアプリにペーストするには、Ámbar にアクセシビリティのアクセス権が必要です。許可しない場合もクリップボードにはコピーされるので、⌘V でペーストできます。";
+"permission.action" = "オンにする";
+
+/* 操作 */
+"action.paste" = "ペースト";
+"action.paste_plain" = "書式なしでペースト";
+"action.pin" = "ピン留め";
+"action.unpin" = "ピン留めを解除";
+"action.delete" = "削除";
+
+/* メニューバー */
+"menu.open" = "Ámbar を開く";
+"menu.pause" = "取り込みを一時停止";
+"menu.recenter" = "ウインドウを中央に配置";
+"menu.clear" = "履歴を消去…";
+"menu.settings" = "設定…";
+"menu.about" = "Ámbar について";
+"menu.quit" = "Ámbar を終了";
+"about.tagline" = "クリップボードの履歴マネージャ。\nすべてが Mac の中だけで完結します。";
+
+/* 警告 */
+"alert.clear.title" = "履歴を消去しますか？";
+"alert.clear.body" = "ピン留めした項目を除くすべての項目が削除されます。取り消すことはできません。";
+"alert.clear.confirm" = "消去";
+"alert.cancel" = "キャンセル";
+
+/* 設定 */
+"settings.title" = "Ámbar の設定";
+"settings.general" = "一般";
+"settings.hotkey" = "グローバルショートカット";
+"settings.launch_at_login" = "ログイン時に開く";
+"settings.pause" = "クリップボードの取り込みを一時停止";
+
+"settings.recognition" = "テキスト認識";
+"settings.ocr" = "画像内のテキストを検索";
+"settings.ocr_help" = "コピーした画像のテキストを読み取り、内容から画像を探せるようにします。処理はすべてこの Mac 上で行われます。";
+
+"settings.retention" = "保存期間";
+"settings.retention.unlimited" = "期間の制限なしで保存";
+"settings.storage.unlimited" = "容量の制限なし";
+"settings.storage.limit" = "最大 %.1f GB";
+"settings.storage.current" = "現在の使用量";
+"settings.purge_now" = "今すぐ整理";
+
+"settings.privacy" = "プライバシー";
+"settings.privacy_help" = "これらのアプリからコピーした内容は保存されません。パスワードマネージャなどが機密として印を付けた内容も無視します。";
+"settings.add_bundle" = "com.example.app";
+"settings.add" = "追加";
+
+"settings.permissions" = "アクセス権";
+"settings.accessibility.granted" = "アクセシビリティを許可済み";
+"settings.accessibility.missing" = "アクセシビリティの許可がありません";
+"settings.open_settings" = "設定を開く";
+"settings.accessibility_help" = "このアクセス権は、直前に使っていたアプリに ⌘V を送るためだけに使われます。許可しなくても Ámbar は動作します。項目がコピーされるので、ご自身でペーストしてください。";
+
+/* エラー */
+"error.store_open" = "履歴を開けませんでした：%@";
+"error.dismiss" = "警告を閉じる";
+
+/* アクセシビリティ — VoiceOver */
+"a11y.search.label" = "クリップボードの履歴を検索";
+"a11y.search.hint" = "入力すると絞り込まれます。img コロン、file コロン、app コロンで種類や取得元を指定できます。";
+"a11y.list.label" = "クリップボードの履歴";
+"a11y.row.hint" = "Return でペースト、Command Return で書式なしペースト";
+"a11y.row.pinned" = "ピン留め済み";
+"a11y.preview.image" = "コピーした画像のプレビュー";
+"a11y.preview.color" = "カラー %@";
+
+"preview.truncated" = "…（先頭 %lld 文字を表示しています。ペーストすると全文がコピーされます）";
+"error.too_large" = "履歴に保存するには大きすぎます：%1$@ は上限の %2$@ を超えています。クリップボードには残っているので ⌘V でペーストできます。";
+
+// Dictado por voz
+"dictation.source_name" = "音声入力";
+"dictation.state.arming" = "長押しで開始";
+"dictation.state.preparing" = "準備中…";
+"dictation.state.listening" = "認識中";
+"dictation.state.finalizing" = "処理中…";
+"dictation.state.delivered" = "完了";
+"dictation.state.failed" = "音声入力できませんでした";
+"dictation.status.listening" = "Ámbar が音声を認識中です";
+"settings.dictation" = "音声入力";
+"settings.dictation.enabled" = "声で入力する";
+"settings.dictation.help" = "履歴のショートカットを長押しすると音声入力が始まります。離しても録音は続きます。⏎ で停止、⌘⌫ で破棄、またはパネルのボタンで操作できます。";
+"settings.dictation.atypical" = "非定型な発話";
+"settings.dictation.atypical_help" = "一般の音声入力では認識しにくい声のために、Appleのアクセシビリティ用モデルを使います。必要な場合のみ有効にしてください。認識結果が変わります。";
+"settings.dictation.measure" = "このMacを測定";
+"settings.dictation.measure_help" = "テスト用の文を書き起こして、このMacがリアルタイムで発話に追いつけるか調べます。数秒かかります。";
+"settings.dictation.measuring" = "測定中…";
+"dictation.measure.failed" = "測定できませんでした。しばらくしてからお試しください。";
+"settings.dictation.mode" = "モード";
+"settings.dictation.mode.live" = "リアルタイム";
+"settings.dictation.mode.deferred" = "終了後";
+"settings.dictionary" = "パーソナル辞書";
+"settings.dictionary.learning" = "修正から学習";
+"settings.dictionary.learning_help" = "音声入力中に単語を修正すると、ここに保存され、以降の認識に反映されます。";
+"settings.dictionary.empty" = "まだ用語はありません。音声入力中に単語を修正すると、ここに表示されます。";
+"settings.dictionary.heard_as" = "「%@」と認識";
+"settings.dictionary.delete" = "「%@」を削除";
+"settings.dictionary.add.written" = "単語または名前";
+"settings.dictionary.add.heard" = "エンジンの聞き取り方(任意)";
+"settings.dictionary.add.confirm" = "追加";
+"dictation.learned" = "「%@」を学習しました";
+"dictation.learned.undo" = "元に戻す";
+"dictation.transcript.hint" = "単語をダブルクリックして修正";
+"dictation.transcript.correct" = "修正";
+"dictation.transcript.expand" = "すべて表示して修正";
+"dictation.transcript.collapse" = "折りたたむ";
+"dictation.stop" = "停止";
+"dictation.start" = "音声入力";
+"dictation.state.truncated" = "完了（末尾が欠けている可能性があります）";
+"dictation.open_settings" = "設定を開く";
+"dictation.model.needed" = "お使いの言語の音声モデルがインストールされていません。";
+"dictation.model.install" = "インストール";
+"dictation.model.installing" = "モデルをインストール中…";
+"dictation.model.installed.announcement" = "モデルをインストールしました"; // Solo para VoiceOver, no se pinta.
+"dictation.tight" = "このMacはリアルタイム音声入力には性能が不足しています。「話し終えてから」モードを推奨します。";
+"dictation.unavailable.locale" = "音声入力はお使いの言語に対応していません。";
+"dictation.unavailable.no_mic" = "使用できるマイクがありません。";
+"dictation.unavailable.denied" = "Ámbar にマイクの使用許可がありません。";
+"menu.pause_for" = "一時停止する時間…";
+"menu.pause_15m" = "15分";
+"menu.pause_1h" = "1時間";
+"menu.pause_until_resumed" = "再開するまで";
+"menu.pause_remaining" = "一時停止はあと %lld 分";
+"dictation.failed.permission" = "Ámbar にマイクの許可がありません。";
+"dictation.failed.model" = "音声モデルがありません。";
+"dictation.failed.device" = "音声入力中にマイクが変わりました。";
+"dictation.discard" = "破棄";
+"dictation.failed.no_speech" = "何も聞こえませんでした。マイクを確認してもう一度お試しください。";
+"panel.pause.resume" = "再開";
+"panel.pause.indefinite" = "履歴を一時停止中";
+"history.resumed.announcement" = "履歴を再開しました"; // Solo para VoiceOver, no se pinta.
+"history.pause_expired.announcement" = "履歴の一時停止が終了しました"; // Solo para VoiceOver, no se pinta.
+"panel.pause.remaining" = "履歴を一時停止中 · あと %lld 分";
+"dictation.failed.quota" = "システムの音声入力の枠を別のAppが使用しています。そのAppを終了してからもう一度お試しください。";
+"settings.dictation.hold" = "ショートカットを押し続けて開始";
+"settings.dictation.hold_help" = "スティッキーキーを使っている場合はオフにしてください。システムが修飾キーを押したままにするため、音声入力が勝手に始まります。ボタンと ⌘D はそのまま使えます。";
+"dictation.failed.time_limit" = "時間制限で終了し、音声入力は破棄されました。";
+"dictation.model.failed" = "モデルをインストールできませんでした。接続を確認してください。";
+"dictation.open_app_settings" = "Ámbar の設定を開く";
+"dictation.model.needed_size" = "お使いの言語の音声モデルがインストールされていません（%@）。";
+"dictation.start.hint" = "コマンド + D";
+
+/* 初回起動時の紹介 */
+"onboarding.title" = "ようこそ";
+"onboarding.progress" = "%1$lld / %2$lld";
+"a11y.onboarding.progress" = "ステップ %1$lld / %2$lld";
+"onboarding.back" = "戻る";
+"onboarding.continue" = "続ける";
+"onboarding.finish" = "Ámbar を使いはじめる";
+"onboarding.replay" = "紹介をもう一度見る";
+"onboarding.welcome.title" = "Ámbar はコピーしたものを残します";
+"onboarding.welcome.body" = "テキスト、画像、ファイル、カラー。ショートカット 1 つで取り出せます。";
+"onboarding.welcome.point.history" = "忘れない履歴";
+"onboarding.welcome.point.history_detail" = "一覧にはサムネール、プレビューには画像全体を表示します。";
+"onboarding.welcome.point.search" = "画像の中まで検索";
+"onboarding.welcome.point.search_detail" = "請求書をコピーすれば「請求書」で見つかります。";
+"onboarding.welcome.point.private" = "Mac の外に出ません";
+"onboarding.welcome.point.private_detail" = "サーバも、アカウントも、通信もありません。";
+"onboarding.location.title" = "「アプリケーション」に入れる";
+"onboarding.location.body.copy" = "Ámbar はディスクイメージから実行されています。アクセス権を許可する前に「アプリケーション」へコピーしてください。アクセス権はこのコピーに対して与えられるため、あとで移動すると失われます。";
+"onboarding.location.body.move" = "Ámbar が「アプリケーション」フォルダにありません。いま移動してください。アクセス権はこのコピーに対して与えられるため、あとで移動すると失われます。";
+"onboarding.location.move" = "「アプリケーション」に移動";
+"onboarding.location.copy" = "「アプリケーション」にコピー";
+"onboarding.location.exists" = "「アプリケーション」にはすでに Ámbar のコピーがあります。";
+"onboarding.location.replace" = "既存のコピーを置き換える";
+"onboarding.location.failed" = "できませんでした：%@。ご自身で「アプリケーション」にドラッグし、そこから開いてください。";
+"onboarding.location.done" = "完了しました。Ámbar は「アプリケーション」から開き直します。";
+"onboarding.accessibility.title" = "ペーストをまかせる";
+"onboarding.accessibility.body" = "このアクセス権がない場合、Ámbar はクリップボードにコピーし、⌘V でご自身がペーストします。許可すると、↵ で直前に使っていたアプリに直接ペーストされます。";
+"permission.grant" = "アクセス権を許可";
+"onboarding.accessibility.waiting" = "待機中… 「プライバシーとセキュリティ」→「アクセシビリティ」でオンにしてください。";
+"onboarding.accessibility.granted" = "許可されました。↵ で直前のアプリにペーストされます。";
+"onboarding.accessibility.optional" = "許可しなくても続けられます。Ámbar は同じように動作し、ペーストだけご自身で行います。";
+"onboarding.invocation.title" = "開き方";
+"onboarding.invocation.body" = "履歴を前面に出すショートカットです。すでに使っているものと重なる場合は（Pages と Word では ⌘⇧V が「ペーストしてスタイルを合わせる」です）、ここで変更してください。";
+"onboarding.invocation.login_help" = "Ámbar はメニューバーに常駐し、Dock にアイコンは出ません。";
+"onboarding.extras.title" = "任意の 2 つ";
+"onboarding.extras.body" = "どちらも負担があるため、はじめからオンにせずにお尋ねします。設定でいつでも変更できます。";
+"onboarding.finish.title" = "これで完了";
+"onboarding.finish.body" = "コピーしたものを取り出したいときは %@ を押してください。";
+"onboarding.finish.settings_hint" = "残りの項目（保存期間、除外するアプリ、テキスト認識）はメニューバーの設定にあります。";
+
+/* グローバルショートカットが使用できない場合 */
+"hotkey.unavailable" = "このショートカットは別のアプリ（または Ámbar の別のコピー）が使用中のため反応しません。別のものを選んでください。";
+
+/* マイクの許可を求めていない場合 */
+"dictation.microphone_needed" = "Ámbar はまだマイクの使用許可を求めていません。";
+"dictation.microphone.grant" = "求める";
+
+/* 自動ペーストを送信できなかった場合 */
+"paste.failed" = "自動でペーストできませんでした。クリップボードにあるので ⌘V でペーストしてください。許可を与えたばかりなら、Ámbar を再起動してください。";
+
+/* 許可後の再起動 */
+"permission.restart_needed" = "Ámbar を起動したまま許可しました。自動ペーストを有効にするにはアプリを再起動してください。";
+"permission.restart" = "再起動";

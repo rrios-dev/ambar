@@ -1,0 +1,5 @@
+/* Ámbar — captura de atajo */
+"shortcut.recording" = "キーを押す…";
+"shortcut.needs_modifier" = "⌘、⌃、⌥ のいずれかを追加してください";
+"a11y.shortcut.label" = "Ámbar を開くグローバルショートカット";
+"a11y.shortcut.hint" = "オンにして、使いたいキーの組み合わせを押してください。Esc で取り消します。";

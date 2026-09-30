@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- El fondo del icono: noche cálida con la resina encendida por detrás.
+       Negro cálido y no neutro — un gris azulado bajo el ámbar lo enfría y lo
+       deja pareciendo naranja de aviso. -->
+  <defs>
+    <linearGradient id="noche" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A1C06"/>
+      <stop offset="1" stop-color="#140C02"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.48" r="0.46">
+      <stop offset="0" stop-color="#F5A524" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#F5A524" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#noche)"/>
+  <rect width="1024" height="1024" fill="url(#halo)"/>
+</svg>

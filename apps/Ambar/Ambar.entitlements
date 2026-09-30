@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Ámbar corre con Hardened Runtime y SIN App Sandbox.
+
+	  Sin sandbox por necesidad: enviar el ⌘V sintético exige el permiso de
+	  Accesibilidad, y ese permiso es incompatible con el sandbox. Es la razón
+	  por la que la app se distribuye fuera de la Mac App Store.
+
+	  Cada excepción del Hardened Runtime relaja una protección real, así que
+	  solo debe entrar aquí la que se demuestre necesaria, no la que se sospeche
+	  por precaución. Ámbar no compila código en tiempo de
+	  ejecución, no carga librerías de terceros y no necesita memoria
+	  ejecutable, de modo que no requiere ninguna de las excepciones habituales
+	  (`allow-jit`, `allow-unsigned-executable-memory`,
+	  `disable-library-validation`).
+
+	  Los entitlements de red y de acceso a ficheros son del sandbox: sin
+	  sandbox no tienen efecto y ponerlos aquí solo confundiría.
+
+	  LA ÚNICA ENTRADA: acceso al micrófono.
+
+	  Bajo Hardened Runtime, el acceso a la entrada de audio se gatea con
+	  `com.apple.security.device.audio-input` aunque no haya sandbox. No es una
+	  excepción de las que aflojan la ejecución (`allow-jit` y compañía): es un
+	  permiso de acceso a un recurso, y su ausencia no da error — el tap
+	  simplemente entrega silencio.
+
+	  Por qué entra sin haberlo demostrado dictando: el modo de fallo es
+	  invisible en desarrollo y solo aparece en la build firmada y distribuida,
+	  que es el peor sitio para descubrirlo. La evidencia es convergente —Chrome,
+	  Discord y Raycast, las tres notarizadas, con Hardened Runtime y sin
+	  sandbox, lo llevan— y el coste de incluirlo es nulo mientras el de omitirlo
+	  es que el dictado no funcione y nadie sepa por qué.
+
+	  PENDIENTE de confirmar hablando al micrófono con el bundle firmado. Si
+	  resultara innecesario, quitarlo y anotar aquí la medición.
+	-->
+	<key>com.apple.security.device.audio-input</key>
+	<true/>
+</dict>
+</plist>

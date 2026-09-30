@@ -1,0 +1,5 @@
+/* Shortcut recorder */
+"shortcut.recording" = "Press…";
+"shortcut.needs_modifier" = "Add ⌘, ⌃ or ⌥";
+"a11y.shortcut.label" = "Global shortcut to open Ámbar";
+"a11y.shortcut.hint" = "Turn it on and press the combination you want. Escape cancels.";

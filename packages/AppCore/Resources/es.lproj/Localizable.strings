@@ -1,0 +1,5 @@
+/* Captura de atajo */
+"shortcut.recording" = "Pulsa…";
+"shortcut.needs_modifier" = "Añade ⌘, ⌃ o ⌥";
+"a11y.shortcut.label" = "Atajo global para abrir Ámbar";
+"a11y.shortcut.hint" = "Actívalo y pulsa la combinación que quieras. Escape cancela.";

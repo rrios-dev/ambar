@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>a11y.search.results</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld результата</string>
+			<key>many</key>
+			<string>%lld результатов</string>
+			<key>one</key>
+			<string>%lld результат</string>
+			<key>other</key>
+			<string>%lld результата</string>
+		</dict>
+	</dict>
+	<key>footer.count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld записи</string>
+			<key>many</key>
+			<string>%lld записей</string>
+			<key>one</key>
+			<string>%lld запись</string>
+			<key>other</key>
+			<string>%lld записи</string>
+		</dict>
+	</dict>
+	<key>settings.dictionary.count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld термина</string>
+			<key>many</key>
+			<string>%lld терминов</string>
+			<key>one</key>
+			<string>%lld термин</string>
+			<key>other</key>
+			<string>%lld термина</string>
+		</dict>
+	</dict>
+	<key>settings.dictionary.uses</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld использования</string>
+			<key>many</key>
+			<string>%lld использований</string>
+			<key>one</key>
+			<string>%lld использование</string>
+			<key>other</key>
+			<string>%lld использования</string>
+		</dict>
+	</dict>
+	<key>settings.retention.days</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@days@</string>
+		<key>days</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>Хранить %lld дня</string>
+			<key>many</key>
+			<string>Хранить %lld дней</string>
+			<key>one</key>
+			<string>Хранить %lld день</string>
+			<key>other</key>
+			<string>Хранить %lld дня</string>
+		</dict>
+	</dict>
+	<key>settings.storage.value</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%1$@ · %2$#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lld</string>
+			<key>few</key>
+			<string>%lld записи</string>
+			<key>many</key>
+			<string>%lld записей</string>
+			<key>one</key>
+			<string>%lld запись</string>
+			<key>other</key>
+			<string>%lld записи</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

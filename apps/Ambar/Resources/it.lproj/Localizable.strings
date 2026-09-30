@@ -1,0 +1,233 @@
+/* Ámbar — italiano */
+
+/* Ricerca */
+"search.placeholder" = "Cerca negli appunti…";
+"search.clear" = "Cancella ricerca";
+
+/* Stato vuoto */
+"empty.no_history" = "La cronologia è vuota";
+"empty.no_results" = "Nessun risultato";
+"empty.hint" = "Copia qualcosa e comparirà qui";
+
+/* Righe */
+"row.untitled" = "Nessun contenuto";
+"row.image_dimensions" = "Immagine %lld × %lld";
+
+/* Tipi */
+"kind.text" = "Testo";
+"kind.rich_text" = "Testo formattato";
+"kind.image" = "Immagine";
+"kind.file" = "File";
+"kind.color" = "Colore";
+"kind.url" = "Link";
+
+/* Anteprima */
+"preview.recognized_text" = "Testo riconosciuto";
+"preview.recognizing" = "Riconoscimento del testo…";
+
+/* Scorciatoie in basso */
+"hint.stop_dictation" = "Ferma e incolla";
+"hint.discard_dictation" = "Scarta";
+"hint.paste" = "Incolla";
+"hint.paste_plain" = "Senza formato";
+"hint.pin" = "Fissa";
+"hint.delete" = "Elimina";
+
+/* Autorizzazioni */
+"permission.needed" = "Manca l’autorizzazione per incollare";
+"permission.help" = "Ámbar ha bisogno dell’accesso ad Accessibilità per incollare in altre app. Senza, copia negli appunti e incolli tu con ⌘V.";
+"permission.action" = "Attiva";
+
+/* Azioni */
+"action.paste" = "Incolla";
+"action.paste_plain" = "Incolla senza formato";
+"action.pin" = "Fissa";
+"action.unpin" = "Rimuovi dai fissati";
+"action.delete" = "Elimina";
+
+/* Menu nella barra */
+"menu.open" = "Apri Ámbar";
+"menu.pause" = "Sospendi acquisizione";
+"menu.clear" = "Svuota cronologia…";
+"menu.settings" = "Impostazioni…";
+"menu.about" = "Informazioni su Ámbar";
+"menu.quit" = "Esci da Ámbar";
+"about.tagline" = "Gestore della cronologia degli appunti.\nTutto resta sul tuo Mac.";
+
+/* Avvisi */
+"alert.clear.title" = "Svuotare la cronologia?";
+"alert.clear.body" = "Verranno eliminate tutte le voci tranne quelle fissate. L’operazione non è reversibile.";
+"alert.clear.confirm" = "Svuota";
+"alert.cancel" = "Annulla";
+
+/* Impostazioni */
+"settings.title" = "Impostazioni di Ámbar";
+"settings.general" = "Generali";
+"settings.hotkey" = "Scorciatoia globale";
+"settings.launch_at_login" = "Apri al login";
+"settings.pause" = "Sospendi l’acquisizione degli appunti";
+
+"settings.recognition" = "Riconoscimento del testo";
+"settings.ocr" = "Cerca il testo dentro le immagini";
+"settings.ocr_help" = "Ámbar legge il testo di ogni immagine copiata per farti ritrovare l’immagine dal suo contenuto. Tutto avviene sul tuo Mac.";
+
+"settings.retention" = "Conservazione";
+"settings.retention.unlimited" = "Conserva senza limiti di tempo";
+"settings.storage.unlimited" = "Nessun limite di dimensione";
+"settings.storage.limit" = "Massimo %.1f GB";
+"settings.storage.current" = "Spazio occupato";
+"settings.purge_now" = "Pulisci ora";
+
+"settings.privacy" = "Privacy";
+"settings.privacy_help" = "Ámbar non salva mai ciò che viene copiato da queste app. Ignora inoltre qualsiasi contenuto che la sua origine contrassegni come riservato, come fanno i gestori di password.";
+"settings.add_bundle" = "com.esempio.app";
+"settings.add" = "Aggiungi";
+
+"settings.permissions" = "Autorizzazioni";
+"settings.accessibility.granted" = "Accessibilità concessa";
+"settings.accessibility.missing" = "Manca l’autorizzazione ad Accessibilità";
+"settings.open_settings" = "Apri Impostazioni";
+"settings.accessibility_help" = "Questa autorizzazione serve solo a inviare ⌘V all’app in cui eri. Senza, Ámbar funziona lo stesso: copia la voce e la incolli tu.";
+
+/* Errori */
+"error.store_open" = "Impossibile aprire la cronologia: %@";
+"error.dismiss" = "Ignora avviso";
+
+/* Accessibilità — VoiceOver */
+"a11y.search.label" = "Cerca nella cronologia degli appunti";
+"a11y.search.hint" = "Digita per filtrare. Usa img due punti, file due punti o app due punti per restringere per tipo o origine.";
+"a11y.list.label" = "Cronologia degli appunti";
+"a11y.row.hint" = "Premi Invio per incollare, Comando Invio per incollare senza formato";
+"a11y.row.pinned" = "fissato";
+"a11y.preview.image" = "Anteprima dell’immagine copiata";
+"a11y.preview.color" = "Colore %@";
+"menu.recenter" = "Centra la finestra";
+
+"preview.truncated" = "… (mostra i primi %lld caratteri; incollando si copia il testo completo)";
+"error.too_large" = "Troppo grande per la cronologia: %1$@ supera il limite di %2$@. Resta negli appunti: incollalo con ⌘V.";
+
+// Dictado por voz
+"dictation.source_name" = "Dettatura";
+"dictation.state.arming" = "Tieni premuto per iniziare";
+"dictation.state.preparing" = "Preparazione…";
+"dictation.state.listening" = "In ascolto";
+"dictation.state.finalizing" = "Completamento…";
+"dictation.state.delivered" = "Fatto";
+"dictation.state.failed" = "Dettatura non riuscita";
+"dictation.status.listening" = "Ámbar è in ascolto";
+"settings.dictation" = "Dettatura vocale";
+"settings.dictation.enabled" = "Dettare con la voce";
+"settings.dictation.help" = "Tieni premuta la scorciatoia della cronologia per iniziare a dettare. Puoi rilasciare: continua a registrare. ⏎ per fermare, ⌘⌫ per scartare, o i pulsanti del pannello.";
+"settings.dictation.atypical" = "Linguaggio atipico";
+"settings.dictation.atypical_help" = "Usa il modello di accessibilità di Apple per voci che la dettatura generale trascrive peggio. Attivalo solo se ti serve: cambia il riconoscimento.";
+"settings.dictation.measure" = "Verifica questo Mac";
+"settings.dictation.measure_help" = "Trascrive una frase di prova per capire se il tuo Mac sta al passo con il parlato in tempo reale. Richiede pochi secondi.";
+"settings.dictation.measuring" = "Misurazione…";
+"dictation.measure.failed" = "Impossibile misurare. Riprova più tardi.";
+"settings.dictation.mode" = "Modalità";
+"settings.dictation.mode.live" = "In diretta";
+"settings.dictation.mode.deferred" = "Alla fine";
+"settings.dictionary" = "Dizionario personale";
+"settings.dictionary.learning" = "Impara dalle mie correzioni";
+"settings.dictionary.learning_help" = "Quando correggi una parola durante la dettatura, viene salvata qui e guida il riconoscimento.";
+"settings.dictionary.empty" = "Ancora nessun termine. Correggi una parola durante la dettatura e apparirà qui.";
+"settings.dictionary.heard_as" = "sentito come %@";
+"settings.dictionary.delete" = "Elimina «%@»";
+"settings.dictionary.add.written" = "Parola o nome";
+"settings.dictionary.add.heard" = "Come lo sente il motore (facoltativo)";
+"settings.dictionary.add.confirm" = "Aggiungi";
+"dictation.learned" = "Imparato «%@»";
+"dictation.learned.undo" = "Annulla";
+"dictation.transcript.hint" = "Doppio clic su una parola per correggerla";
+"dictation.transcript.correct" = "Correggi";
+"dictation.transcript.expand" = "Mostra tutto e correggi";
+"dictation.transcript.collapse" = "Comprimi";
+"dictation.stop" = "Interrompi";
+"dictation.start" = "Dettare";
+"dictation.state.truncated" = "Fatto (la fine potrebbe mancare)";
+"dictation.open_settings" = "Apri Impostazioni";
+"dictation.model.needed" = "Il modello vocale della tua lingua non è installato.";
+"dictation.model.install" = "Installa";
+"dictation.model.installing" = "Installazione del modello…";
+"dictation.model.installed.announcement" = "Modello installato"; // Solo para VoiceOver, no se pinta.
+"dictation.tight" = "Questo Mac è al limite per la dettatura in tempo reale. Si consiglia la modalità «Alla fine».";
+"dictation.unavailable.locale" = "La dettatura non supporta la tua lingua.";
+"dictation.unavailable.no_mic" = "Nessun microfono disponibile.";
+"dictation.unavailable.denied" = "Ámbar non ha il permesso di usare il microfono.";
+"menu.pause_for" = "Sospendi per…";
+"menu.pause_15m" = "15 minuti";
+"menu.pause_1h" = "1 ora";
+"menu.pause_until_resumed" = "Fino a riattivazione";
+"menu.pause_remaining" = "Restano %lld min di pausa";
+"dictation.failed.permission" = "Ámbar non ha il permesso per il microfono.";
+"dictation.failed.model" = "Manca il modello vocale.";
+"dictation.failed.device" = "Il microfono è cambiato durante la dettatura.";
+"dictation.discard" = "Scarta";
+"dictation.failed.no_speech" = "Non si è sentito nulla. Controlla il microfono e riprova.";
+"panel.pause.resume" = "Riprendi";
+"panel.pause.indefinite" = "Cronologia in pausa";
+"history.resumed.announcement" = "Cronologia ripresa"; // Solo para VoiceOver, no se pinta.
+"history.pause_expired.announcement" = "Pausa della cronologia terminata"; // Solo para VoiceOver, no se pinta.
+"panel.pause.remaining" = "Cronologia in pausa · %lld min";
+"dictation.failed.quota" = "Un’altra app occupa gli spazi di dettatura del sistema. Chiudila e riprova.";
+"settings.dictation.hold" = "Attiva tenendo premuta la scorciatoia";
+"settings.dictation.hold_help" = "Disattivalo se usi i tasti singoli: il sistema mantiene i modificatori bloccati e la dettatura partirebbe da sola. Il pulsante e ⌘D continuano a funzionare.";
+"dictation.failed.time_limit" = "Chiuso per limite di tempo; la dettatura è stata scartata.";
+"dictation.model.failed" = "Non è stato possibile installare il modello. Controlla la connessione.";
+"dictation.open_app_settings" = "Apri le impostazioni di Ámbar";
+"dictation.model.needed_size" = "Il modello vocale della tua lingua non è installato (%@).";
+"dictation.start.hint" = "Comando + D";
+
+/* Presentazione al primo avvio */
+"onboarding.title" = "Benvenuto";
+"onboarding.progress" = "%1$lld di %2$lld";
+"a11y.onboarding.progress" = "Passo %1$lld di %2$lld";
+"onboarding.back" = "Indietro";
+"onboarding.continue" = "Continua";
+"onboarding.finish" = "Inizia a usare Ámbar";
+"onboarding.replay" = "Rivedi la presentazione";
+"onboarding.welcome.title" = "Ámbar conserva ciò che copi";
+"onboarding.welcome.body" = "Testo, immagini, file e colori, a una scorciatoia di distanza.";
+"onboarding.welcome.point.history" = "Una cronologia che non dimentica";
+"onboarding.welcome.point.history_detail" = "Miniature nell’elenco, immagine intera nell’anteprima.";
+"onboarding.welcome.point.search" = "Cerca anche dentro le immagini";
+"onboarding.welcome.point.search_detail" = "Copia una fattura e ritrovala scrivendo «fattura».";
+"onboarding.welcome.point.private" = "Niente esce dal tuo Mac";
+"onboarding.welcome.point.private_detail" = "Nessun server, nessun account, nessuna connessione.";
+"onboarding.location.title" = "Portalo in Applicazioni";
+"onboarding.location.body.copy" = "Ámbar è in esecuzione dall’immagine disco. Copialo in Applicazioni prima di concedere qualsiasi autorizzazione: le autorizzazioni si concedono a questa copia, e spostarla dopo le fa perdere.";
+"onboarding.location.body.move" = "Ámbar non è nella cartella Applicazioni. Spostalo ora: le autorizzazioni si concedono a questa copia, e spostarla più tardi le fa perdere.";
+"onboarding.location.move" = "Sposta in Applicazioni";
+"onboarding.location.copy" = "Copia in Applicazioni";
+"onboarding.location.exists" = "In Applicazioni c’è già una copia di Ámbar.";
+"onboarding.location.replace" = "Sostituisci la copia esistente";
+"onboarding.location.failed" = "Non è riuscito: %@. Trascinalo tu in Applicazioni e aprilo da lì.";
+"onboarding.location.done" = "Fatto. Ámbar si riaprirà da Applicazioni.";
+"onboarding.accessibility.title" = "Fallo incollare per te";
+"onboarding.accessibility.body" = "Senza questa autorizzazione Ámbar copia negli appunti e incolli tu con ⌘V. Con essa, ↵ incolla direttamente nell’app in cui eri.";
+"permission.grant" = "Concedi l’autorizzazione";
+"onboarding.accessibility.waiting" = "In attesa… attivala in Privacy e sicurezza → Accessibilità.";
+"onboarding.accessibility.granted" = "Concessa. ↵ incollerà nell’app in cui eri.";
+"onboarding.accessibility.optional" = "Puoi andare avanti senza: Ámbar funziona uguale, incollerai tu.";
+"onboarding.invocation.title" = "Come si apre";
+"onboarding.invocation.body" = "Questa è la scorciatoia che porta in primo piano la cronologia. Se va in conflitto con qualcosa che già usi — in Pages e Word ⌘⇧V è «incolla con lo stesso stile» —, cambiala qui.";
+"onboarding.invocation.login_help" = "Ámbar vive nella barra dei menu, senza icona nel Dock.";
+"onboarding.extras.title" = "Due cose opzionali";
+"onboarding.extras.body" = "Entrambe hanno un costo, quindi si chiedono invece di darle per scontate. Puoi cambiarle quando vuoi nelle impostazioni.";
+"onboarding.finish.title" = "È tutto";
+"onboarding.finish.body" = "Premi %@ quando vuoi recuperare qualcosa che hai copiato.";
+"onboarding.finish.settings_hint" = "Il resto — conservazione, app escluse, riconoscimento del testo — è nelle impostazioni, dalla barra dei menu.";
+
+/* Scorciatoia globale non disponibile */
+"hotkey.unavailable" = "Un’altra app — o un’altra copia di Ámbar — usa già questa scorciatoia, quindi non risponde. Scegline un’altra.";
+
+/* Autorizzazione microfono non richiesta */
+"dictation.microphone_needed" = "Ámbar non ha ancora chiesto l’accesso al microfono.";
+"dictation.microphone.grant" = "Chiedilo";
+
+/* L’incolla automatico non è stato inviato */
+"paste.failed" = "Non è stato possibile incollare da solo. Ce l’hai negli appunti: incolla con ⌘V. Se hai appena concesso l’autorizzazione, riavvia Ámbar.";
+
+/* Riavvio dopo l’autorizzazione */
+"permission.restart_needed" = "Hai concesso l’autorizzazione con Ámbar aperto. Riavvia l’app perché l’incolla automatico funzioni.";
+"permission.restart" = "Riavvia";

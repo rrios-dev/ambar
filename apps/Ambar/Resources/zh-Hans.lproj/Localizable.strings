@@ -1,0 +1,233 @@
+/* Ámbar — 简体中文 */
+
+/* 搜索 */
+"search.placeholder" = "搜索剪贴板…";
+"search.clear" = "清除搜索";
+
+/* 空状态 */
+"empty.no_history" = "历史记录为空";
+"empty.no_results" = "没有结果";
+"empty.hint" = "复制内容后会显示在这里";
+
+/* 行 */
+"row.untitled" = "无内容";
+"row.image_dimensions" = "图像 %lld × %lld";
+
+/* 类型 */
+"kind.text" = "文本";
+"kind.rich_text" = "富文本";
+"kind.image" = "图像";
+"kind.file" = "文件";
+"kind.color" = "颜色";
+"kind.url" = "链接";
+
+/* 预览 */
+"preview.recognized_text" = "识别出的文本";
+"preview.recognizing" = "正在识别文本…";
+
+/* 底部快捷键 */
+"hint.stop_dictation" = "停止并粘贴";
+"hint.discard_dictation" = "放弃";
+"hint.paste" = "粘贴";
+"hint.paste_plain" = "无格式";
+"hint.pin" = "固定";
+"hint.delete" = "删除";
+
+/* 权限 */
+"permission.needed" = "缺少粘贴权限";
+"permission.help" = "Ámbar 需要“辅助功能”权限才能粘贴到其他 App。未授权时仍会复制到剪贴板，你可以用 ⌘V 自行粘贴。";
+"permission.action" = "开启";
+
+/* 操作 */
+"action.paste" = "粘贴";
+"action.paste_plain" = "粘贴为纯文本";
+"action.pin" = "固定";
+"action.unpin" = "取消固定";
+"action.delete" = "删除";
+
+/* 菜单栏 */
+"menu.open" = "打开 Ámbar";
+"menu.pause" = "暂停记录";
+"menu.recenter" = "窗口居中";
+"menu.clear" = "清空历史记录…";
+"menu.settings" = "设置…";
+"menu.about" = "关于 Ámbar";
+"menu.quit" = "退出 Ámbar";
+"about.tagline" = "剪贴板历史记录管理器。\n所有内容都留在你的 Mac 上。";
+
+/* 提醒 */
+"alert.clear.title" = "要清空历史记录吗？";
+"alert.clear.body" = "除已固定的项目外，所有条目都会被删除。此操作无法撤销。";
+"alert.clear.confirm" = "清空";
+"alert.cancel" = "取消";
+
+/* 设置 */
+"settings.title" = "Ámbar 设置";
+"settings.general" = "通用";
+"settings.hotkey" = "全局快捷键";
+"settings.launch_at_login" = "登录时打开";
+"settings.pause" = "暂停记录剪贴板";
+
+"settings.recognition" = "文本识别";
+"settings.ocr" = "搜索图像中的文本";
+"settings.ocr_help" = "Ámbar 会读取每张复制图像中的文本，让你可以按内容找回它。全部处理都在你的 Mac 上完成。";
+
+"settings.retention" = "保留";
+"settings.retention.unlimited" = "不限时间保留";
+"settings.storage.unlimited" = "不限大小";
+"settings.storage.limit" = "最多 %.1f GB";
+"settings.storage.current" = "当前占用";
+"settings.purge_now" = "立即清理";
+
+"settings.privacy" = "隐私";
+"settings.privacy_help" = "Ámbar 从不保存这些 App 中复制的内容。它也会忽略来源标记为机密的任何内容，密码管理器就会这样标记。";
+"settings.add_bundle" = "com.example.app";
+"settings.add" = "添加";
+
+"settings.permissions" = "权限";
+"settings.accessibility.granted" = "已授予辅助功能权限";
+"settings.accessibility.missing" = "缺少辅助功能权限";
+"settings.open_settings" = "打开设置";
+"settings.accessibility_help" = "此权限仅用于向你之前所在的 App 发送 ⌘V。没有它 Ámbar 也能使用：条目会被复制，由你自行粘贴。";
+
+/* 错误 */
+"error.store_open" = "无法打开历史记录：%@";
+"error.dismiss" = "忽略提示";
+
+/* 辅助功能 — 旁白 */
+"a11y.search.label" = "搜索剪贴板历史记录";
+"a11y.search.hint" = "输入即可筛选。使用 img 冒号、file 冒号或 app 冒号可按类型或来源缩小范围。";
+"a11y.list.label" = "剪贴板历史记录";
+"a11y.row.hint" = "按回车键粘贴，按 Command 回车键粘贴为纯文本";
+"a11y.row.pinned" = "已固定";
+"a11y.preview.image" = "所复制图像的预览";
+"a11y.preview.color" = "颜色 %@";
+
+"preview.truncated" = "…（仅显示前 %lld 个字符；粘贴时会复制完整文本）";
+"error.too_large" = "内容过大，无法存入历史记录：%1$@ 超过 %2$@ 的上限。它仍在剪贴板中，可用 ⌘V 粘贴。";
+
+// Dictado por voz
+"dictation.source_name" = "语音输入";
+"dictation.state.arming" = "按住开始";
+"dictation.state.preparing" = "正在准备…";
+"dictation.state.listening" = "正在聆听";
+"dictation.state.finalizing" = "正在完成…";
+"dictation.state.delivered" = "完成";
+"dictation.state.failed" = "无法进行语音输入";
+"dictation.status.listening" = "Ámbar 正在聆听";
+"settings.dictation" = "语音输入";
+"settings.dictation.enabled" = "用语音输入";
+"settings.dictation.help" = "按住历史记录快捷键开始听写。松手也没关系，录音会继续。按 ⏎ 停止，按 ⌘⌫ 放弃，或使用面板上的按钮。";
+"settings.dictation.atypical" = "非典型语音";
+"settings.dictation.atypical_help" = "为一般听写难以识别的嗓音启用 Apple 的辅助功能模型。仅在需要时开启：识别方式会改变。";
+"settings.dictation.measure" = "检测这台 Mac";
+"settings.dictation.measure_help" = "转写一句测试语句，判断这台 Mac 能否实时跟上说话速度。需要几秒钟。";
+"settings.dictation.measuring" = "正在测量…";
+"dictation.measure.failed" = "无法测量，请稍后再试。";
+"settings.dictation.mode" = "模式";
+"settings.dictation.mode.live" = "实时";
+"settings.dictation.mode.deferred" = "结束后";
+"settings.dictionary" = "个人词典";
+"settings.dictionary.learning" = "从我的更正中学习";
+"settings.dictionary.learning_help" = "听写时更正单词后,它会保存在这里并用于改进后续识别。";
+"settings.dictionary.empty" = "暂无词条。在听写时更正一个单词,它就会出现在这里。";
+"settings.dictionary.heard_as" = "识别为%@";
+"settings.dictionary.delete" = "删除“%@”";
+"settings.dictionary.add.written" = "单词或名称";
+"settings.dictionary.add.heard" = "引擎听到的形式(可选)";
+"settings.dictionary.add.confirm" = "添加";
+"dictation.learned" = "已学习“%@”";
+"dictation.learned.undo" = "撤销";
+"dictation.transcript.hint" = "双击单词进行更正";
+"dictation.transcript.correct" = "更正";
+"dictation.transcript.expand" = "显示全部并更正";
+"dictation.transcript.collapse" = "收起";
+"dictation.stop" = "停止";
+"dictation.start" = "语音输入";
+"dictation.state.truncated" = "完成（结尾可能缺失）";
+"dictation.open_settings" = "打开设置";
+"dictation.model.needed" = "尚未安装你所用语言的语音模型。";
+"dictation.model.install" = "安装";
+"dictation.model.installing" = "正在安装模型…";
+"dictation.model.installed.announcement" = "模型已安装"; // Solo para VoiceOver, no se pinta.
+"dictation.tight" = "这台 Mac 运行实时听写较为吃力，建议使用“说完之后”模式。";
+"dictation.unavailable.locale" = "语音输入不支持你使用的语言。";
+"dictation.unavailable.no_mic" = "没有可用的麦克风。";
+"dictation.unavailable.denied" = "Ámbar 没有使用麦克风的权限。";
+"menu.pause_for" = "暂停时长…";
+"menu.pause_15m" = "15 分钟";
+"menu.pause_1h" = "1 小时";
+"menu.pause_until_resumed" = "直到我恢复";
+"menu.pause_remaining" = "暂停还剩 %lld 分钟";
+"dictation.failed.permission" = "Ámbar 没有麦克风权限。";
+"dictation.failed.model" = "缺少语音模型。";
+"dictation.failed.device" = "语音输入过程中麦克风已更换。";
+"dictation.discard" = "放弃";
+"dictation.failed.no_speech" = "没有听到任何声音。请检查麦克风后重试。";
+"panel.pause.resume" = "恢复";
+"panel.pause.indefinite" = "历史记录已暂停";
+"history.resumed.announcement" = "历史记录已恢复"; // Solo para VoiceOver, no se pinta.
+"history.pause_expired.announcement" = "历史记录暂停已结束"; // Solo para VoiceOver, no se pinta.
+"panel.pause.remaining" = "历史记录已暂停 · %lld 分钟";
+"dictation.failed.quota" = "系统的听写名额被其他 App 占用。请退出该 App 后重试。";
+"settings.dictation.hold" = "按住快捷键触发";
+"settings.dictation.hold_help" = "如果你使用粘滞键，请关闭此项：系统会保持修饰键处于按下状态，语音输入会自行开始。按钮和 ⌘D 仍可使用。";
+"dictation.failed.time_limit" = "已达时间上限而结束，语音输入已放弃。";
+"dictation.model.failed" = "无法安装模型。请检查网络连接。";
+"dictation.open_app_settings" = "打开 Ámbar 设置";
+"dictation.model.needed_size" = "尚未安装你所用语言的语音模型（%@）。";
+"dictation.start.hint" = "Command + D";
+
+/* 首次使用介绍 */
+"onboarding.title" = "欢迎";
+"onboarding.progress" = "%1$lld / %2$lld";
+"a11y.onboarding.progress" = "第 %1$lld 步，共 %2$lld 步";
+"onboarding.back" = "上一步";
+"onboarding.continue" = "继续";
+"onboarding.finish" = "开始使用 Ámbar";
+"onboarding.replay" = "再看一次介绍";
+"onboarding.welcome.title" = "Ámbar 会留住你复制的内容";
+"onboarding.welcome.body" = "文本、图像、文件和颜色，一个快捷键就能取回。";
+"onboarding.welcome.point.history" = "不会遗忘的历史记录";
+"onboarding.welcome.point.history_detail" = "列表里是缩略图，预览里是完整图像。";
+"onboarding.welcome.point.search" = "连图像里的文字也能搜";
+"onboarding.welcome.point.search_detail" = "复制一张发票，之后输入「发票」就能找到。";
+"onboarding.welcome.point.private" = "内容不会离开你的 Mac";
+"onboarding.welcome.point.private_detail" = "没有服务器，不用账户，也不需要联网。";
+"onboarding.location.title" = "把它放进「应用程序」";
+"onboarding.location.body.copy" = "Ámbar 正从磁盘映像运行。请在授予任何权限之前把它复制到「应用程序」：权限是授予这一份副本的，之后再移动就会丢失。";
+"onboarding.location.body.move" = "Ámbar 不在「应用程序」文件夹里。请现在移动它：权限是授予这一份副本的，以后再移动就会丢失。";
+"onboarding.location.move" = "移动到「应用程序」";
+"onboarding.location.copy" = "复制到「应用程序」";
+"onboarding.location.exists" = "「应用程序」中已有一份 Ámbar。";
+"onboarding.location.replace" = "替换已有的副本";
+"onboarding.location.failed" = "没有成功：%@。请自行把它拖到「应用程序」，再从那里打开。";
+"onboarding.location.done" = "完成。Ámbar 会从「应用程序」重新打开。";
+"onboarding.accessibility.title" = "让它替你粘贴";
+"onboarding.accessibility.body" = "没有这项权限时，Ámbar 会复制到剪贴板，由你用 ⌘V 粘贴。有了它，↵ 会直接粘贴到你之前所在的 App。";
+"permission.grant" = "授予权限";
+"onboarding.accessibility.waiting" = "等待中… 请在「隐私与安全性」→「辅助功能」中打开。";
+"onboarding.accessibility.granted" = "已授予。↵ 会粘贴到你之前所在的 App。";
+"onboarding.accessibility.optional" = "不授予也可以继续：Ámbar 照常使用，只是由你自己粘贴。";
+"onboarding.invocation.title" = "怎么打开";
+"onboarding.invocation.body" = "这个快捷键会把历史记录调到最前。如果和你已经在用的冲突（在 Pages 和 Word 中，⌘⇧V 是「粘贴并匹配样式」），可以在这里改。";
+"onboarding.invocation.login_help" = "Ámbar 常驻在菜单栏，不在 Dock 中显示图标。";
+"onboarding.extras.title" = "两项可选功能";
+"onboarding.extras.body" = "两项都有代价，所以先问你，而不是默认开启。你随时可以在设置中更改。";
+"onboarding.finish.title" = "好了";
+"onboarding.finish.body" = "想找回复制过的内容时，按 %@。";
+"onboarding.finish.settings_hint" = "其余选项（保留时间、排除的 App、文字识别）都在菜单栏的设置里。";
+
+/* 全局快捷键不可用 */
+"hotkey.unavailable" = "这个快捷键已被其他 App（或另一份 Ámbar）占用，因此没有反应。请换一个。";
+
+/* 尚未请求麦克风权限 */
+"dictation.microphone_needed" = "Ámbar 还没有请求麦克风权限。";
+"dictation.microphone.grant" = "请求权限";
+
+/* 自动粘贴未能发送 */
+"paste.failed" = "无法自动粘贴。内容已在剪贴板中，请用 ⌘V 粘贴。如果你刚刚授予权限，请重新启动 Ámbar。";
+
+/* 授予权限后的重启 */
+"permission.restart_needed" = "你是在 Ámbar 运行时授予权限的。请重新启动 App，自动粘贴才会生效。";
+"permission.restart" = "重新启动";
