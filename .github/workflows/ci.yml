@@ -24,4 +24,9 @@ jobs:
           swift --version
       - run: swift build
       - run: swift test
+        env:
+          # Hosted runners have no on-device speech models, so the tests that talk to the
+          # Speech framework are skipped here — declared, not automatic. Locally they
+          # always run, and they are the ones that prove transcription really works.
+          AMBAR_SKIP_SPEECH_TESTS: '1'
       - run: ./Scripts/check-localization.sh
