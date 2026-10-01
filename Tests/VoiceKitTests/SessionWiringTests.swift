@@ -167,6 +167,63 @@ struct SessionWiringTests {
         func isHeld(_ locale: Locale) async -> Bool { held.contains(locale.identifier) }
     }
 
+    /// A catalog whose model reads as missing until it has been reserved `needed` times:
+    /// the race where something else released the app-wide reservation between our
+    /// `reserve` and the status question.
+    actor FlickeringCatalog: ModelCatalog {
+        private let needed: Int
+        private let whenNotReady: ModelAvailability
+        private(set) var reserves = 0
+        init(installedAfterReserves needed: Int, whenNotReady: ModelAvailability = .supported) {
+            self.needed = needed
+            self.whenNotReady = whenNotReady
+        }
+        func supportedLocale(equivalentTo locale: Locale) async -> Locale? { locale }
+        func availability(forLocale locale: Locale) async -> ModelAvailability {
+            reserves >= needed ? .installed : whenNotReady
+        }
+        func installModel(
+            forLocale locale: Locale,
+            onProgress: @Sendable @escaping (Double) -> Void
+        ) async throws {}
+        func installationSize(forLocale locale: Locale) async -> Int64? { nil }
+        func reserve(locale: Locale) async throws -> Bool { reserves += 1; return true }
+        func release(locale: Locale) async {}
+        func reservation() async -> (maximum: Int, reserved: [Locale]) { (5, []) }
+        func endModelRetention() async {}
+    }
+
+    @Test("an installed model read as missing for an instant is confirmed after re-reserving")
+    func installedCheckSurvivesALostReservation() async {
+        // The reservation was taken once by `prepare()` and lost before the question.
+        let catalog = FlickeringCatalog(installedAfterReserves: 1)
+        let confirmed = await SpeechSession.confirmInstalled(
+            locale: Self.locale, in: catalog, pause: .zero
+        )
+        #expect(confirmed, "failed on the first answer instead of reserving again")
+        #expect(await catalog.reserves == 1)
+    }
+
+    @Test("a model that is really missing still fails, after the bounded retries")
+    func missingModelStillFails() async {
+        let catalog = FlickeringCatalog(installedAfterReserves: .max)
+        let confirmed = await SpeechSession.confirmInstalled(
+            locale: Self.locale, in: catalog, attempts: 3, pause: .zero
+        )
+        #expect(!confirmed)
+        #expect(await catalog.reserves == 2, "retried more than the cap")
+    }
+
+    @Test("an unsupported language is final and is not retried")
+    func unsupportedIsNotRetried() async {
+        let catalog = FlickeringCatalog(installedAfterReserves: .max, whenNotReady: .unsupported)
+        let confirmed = await SpeechSession.confirmInstalled(
+            locale: Self.locale, in: catalog, pause: .zero
+        )
+        #expect(!confirmed)
+        #expect(await catalog.reserves == 0)
+    }
+
     /// La primera guarda de generación de `prepare()`: cancelar justo después de que la
     /// reserva se resuelva, y antes de que `prepare()` compruebe si sigue vigente.
     ///

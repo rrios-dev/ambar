@@ -164,7 +164,28 @@ public enum Paster {
                     return
                 }
             }
-            try? await Task.sleep(for: .milliseconds(15))
+            // Short: once the panel leaves the window order the focus is usually back
+            // on the first or second look, and every millisecond here is felt.
+            try? await Task.sleep(for: .milliseconds(4))
+        }
+    }
+
+    /// Waits until a key is physically up.
+    ///
+    /// For keys that trigger a paste. Measured on 2026-10-01: ↵ pasted at 38 ms while
+    /// the finger came off the key around 90 ms, after the keyboard had already gone
+    /// back to the target app, and that release earned the system beep on every paste
+    /// made with the keyboard. Pasting with no key involved was silent. Waiting for the
+    /// release keeps the whole keystroke inside the panel, which is also how macOS
+    /// buttons respond: on release. Capped, so a key left down cannot hold the paste.
+    public static func waitForKeyRelease(
+        _ keyCode: CGKeyCode,
+        timeout: Duration = .milliseconds(400)
+    ) async {
+        let deadline = ContinuousClock.now.advanced(by: timeout)
+        while ContinuousClock.now < deadline,
+              CGEventSource.keyState(.combinedSessionState, key: keyCode) {
+            try? await Task.sleep(for: .milliseconds(4))
         }
     }
 
@@ -174,13 +195,17 @@ public enum Paster {
     /// siguen físicamente hundidos, el sistema los combina y la app de destino
     /// recibe una combinación distinta. Con techo, para no quedarse colgado si
     /// alguien deja una tecla apoyada.
+    ///
+    /// ⌘ is not waited for. The synthetic event IS ⌘V, so a ⌘ still held — the usual
+    /// case after ⌘↵, "paste as plain text" — combines into exactly what is posted, and
+    /// waiting for it held every plain-text paste until the finger came up.
     public static func waitForModifiersToClear(timeout: Duration = .milliseconds(400)) async {
-        let interesting: NSEvent.ModifierFlags = [.shift, .option, .control, .command]
+        let interesting: NSEvent.ModifierFlags = [.shift, .option, .control]
         let deadline = ContinuousClock.now.advanced(by: timeout)
 
         while ContinuousClock.now < deadline {
             if NSEvent.modifierFlags.intersection(interesting).isEmpty { return }
-            try? await Task.sleep(for: .milliseconds(15))
+            try? await Task.sleep(for: .milliseconds(4))
         }
     }
 }

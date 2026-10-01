@@ -117,6 +117,9 @@ struct ReservationTests {
         settings.isDictationEnabled = dictationEnabled
         let model = AppModel(settings: settings)
         model.catalogProvider = { _ in catalog }
+        // Fixed, never read from the machine: a test run next to a live Ámbar must not
+        // change which branch of the launch sweep it exercises.
+        model.anotherInstanceIsRunning = { false }
         return model
     }
 
@@ -178,6 +181,22 @@ struct ReservationTests {
             catalog.reservedIdentifiers.isEmpty,
             "quedaron ranuras de una ejecución anterior: \(catalog.reservedIdentifiers)"
         )
+    }
+
+    /// The reservation is per app, not per process: an instance sweeping at launch while
+    /// another Ámbar runs takes the language from under it, and that one then answers
+    /// "Falta el modelo de voz" with the model installed. Measured on 2026-10-01.
+    @Test("the launch sweep leaves the reservations alone while another Ámbar is running")
+    func launchSweepSparesAnotherRunningInstance() async {
+        let catalog = SpyCatalog()
+        catalog.preReserveAll()
+        let model = Self.model(dictationEnabled: true, catalog: catalog)
+        model.anotherInstanceIsRunning = { true }
+
+        await model.refreshDictationOffer(permission: .granted)
+
+        #expect(catalog.releaseCalls == 0, "released the running instance's language")
+        #expect(catalog.reservedIdentifiers == Set(catalog.variants))
     }
 
     /// Y lo que el test anterior sí protegía de verdad, conservado: **después** del

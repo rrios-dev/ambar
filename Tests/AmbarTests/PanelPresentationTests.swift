@@ -68,39 +68,89 @@ struct PanelPresentationTests {
         #expect(controller.presentation == .hidden, "el atajo dejó de cerrar sin dictado")
     }
 
-    @Test("ocultar esconde el contenido, no solo la ventana")
-    func hidingAlsoHidesTheContent() throws {
-        let (controller, _, root) = try Self.make()
-        defer { controller.hide(); try? FileManager.default.removeItem(at: root) }
-
-        controller.show()
-        let content = try #require(controller.hostingView)
-        #expect(!content.isHidden, "el contenido no se montó al abrir")
-
-        controller.hide()
-
-        // La ventana ya no sale del orden, y el sistema la sigue ofreciendo como «ventana en
-        // pantalla»: los selectores de compartir ventana la enumeran. Con la superficie
-        // conservando el último fotograma, lo que enumeran es **el historial**. Ocultar el
-        // contenido deja la superficie sin nada que enseñar y no cuesta latencia: medido,
-        // 12,9 ms frente a 12,1 antes.
-        #expect(content.isHidden, "la ventana oculta conserva el historial a la vista")
-    }
-
-    @Test("ocultar deja la ventana invisible pero viva")
-    func hidingKeepsTheWindowWarm() throws {
+    @Test("hiding with the keyboard takes the panel out of the window order")
+    func hidingWithTheKeyboardOrdersOut() throws {
         let (controller, _, root) = try Self.make()
         defer { controller.hide(); try? FileManager.default.removeItem(at: root) }
 
         controller.show()
         let window = try #require(controller.window)
-        #expect(window.alphaValue == 1)
+        try #require(window.isKeyWindow, "the panel did not take the keyboard on show")
 
         controller.hide()
-        // Invisible y sin eventos de ratón, pero **sin salir del orden**: volver a entrar
-        // cuesta 758 ms por el material de cristal. Es la razón de todo esto.
-        #expect(window.alphaValue == 0, "quedó visible")
-        #expect(window.ignoresMouseEvents, "una ventana invisible que intercepta clics")
+        // The keyboard has to leave with the window, synchronously: a paste waits on it,
+        // and an invisible window that keeps it eats keystrokes with a beep.
+        #expect(!window.isKeyWindow, "an invisible panel kept the keyboard")
+        #expect(!window.isVisible, "the panel stayed in the window order")
+        #expect(controller.presentation == .hidden)
+    }
+
+    @Test("hiding without the keyboard leaves the panel invisible, untouchable and empty")
+    func hidingWithoutTheKeyboardStaysInPlace() throws {
+        let (controller, _, root) = try Self.make()
+        defer { controller.hide(); try? FileManager.default.removeItem(at: root) }
+
+        controller.show()
+        let window = try #require(controller.window)
+        let content = try #require(controller.hostingView)
+        #expect(window.alphaValue == 1)
+        #expect(!content.isHidden, "the content was not mounted on show")
+
+        // Another window takes the keyboard first, as when the user clicks into another
+        // app; the panel then hides without it.
+        let other = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 10, height: 10),
+            styleMask: [.titled],
+            backing: .buffered,
+            defer: false
+        )
+        other.isReleasedWhenClosed = false
+        defer { other.close() }
+        other.makeKeyAndOrderFront(nil)
+        try #require(!window.isKeyWindow, "the test window did not take the keyboard")
+
+        controller.hide()
+        // Still in the window order, so it must show nothing and catch nothing: alpha 0,
+        // no mouse, out of captures and window pickers, and no history on its surface.
+        #expect(window.alphaValue == 0, "left visible")
+        #expect(window.ignoresMouseEvents, "an invisible window that intercepts clicks")
+        #expect(window.sharingType == .none, "still offered to captures and pickers")
+        #expect(content.isHidden, "the hidden window keeps the history on its surface")
+        #expect(controller.presentation == .hidden)
+    }
+
+    @Test("⌘C copies the selected entry and closes, instead of beeping")
+    func commandCCopiesTheSelectedEntry() throws {
+        let (controller, model, root) = try Self.make()
+        defer { controller.hide(); try? FileManager.default.removeItem(at: root) }
+        // Never the general pasteboard: a test must leave the user's clipboard alone.
+        let pasteboard = NSPasteboard(
+            name: NSPasteboard.Name("dev.rrios.ambar.tests.\(UUID().uuidString)")
+        )
+        controller.pasteboard = { pasteboard }
+
+        let store = try #require(model.store)
+        _ = try store.insert(AppModel.dictationItem(text: "copied from the history"))
+        controller.show()
+        try #require(model.selectedItem != nil, "nothing selected to copy")
+
+        let commandC = try #require(NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: .command,
+            timestamp: 0,
+            windowNumber: controller.window?.windowNumber ?? 0,
+            context: nil,
+            characters: "c",
+            charactersIgnoringModifiers: "c",
+            isARepeat: false,
+            keyCode: 8
+        ))
+
+        // Handled here means it never reaches the empty search field, which is where
+        // AppKit found nothing to copy and beeped.
+        #expect(controller.handle(commandC), "⌘C fell through to the search field")
+        #expect(pasteboard.string(forType: .string) == "copied from the history")
         #expect(controller.presentation == .hidden)
     }
 
@@ -548,8 +598,9 @@ struct WindowSharingTests {
         #expect(window.sharingType == .readOnly, "visible pero no compartible")
 
         controller.hide()
+        // Out of the window order nothing can capture it; in place, sharing must be off.
         #expect(
-            window.sharingType == .none,
+            !window.isVisible || window.sharingType == .none,
             "la ventana oculta se sigue ofreciendo a capturas y selectores"
         )
     }

@@ -2,37 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key>
-	<string>Ambar</string>
-	<key>CFBundleDisplayName</key>
-	<string>Ámbar</string>
-	<key>CFBundleIdentifier</key>
-	<string>dev.rrios.ambar</string>
-	<key>CFBundleExecutable</key>
-	<string>Ambar</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.1.0</string>
-	<key>CFBundleVersion</key>
-	<string>2</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>26.0</string>
-
-	<!-- Agente: sin icono en el Dock. Ámbar vive en la barra de menús. -->
-	<key>LSUIElement</key>
-	<true/>
-
-	<!-- Idioma de reserva para todo el planeta, no idioma de autoría. Estaba en `es`:
-	     quien abriera Ámbar en Tailandia, Polonia o Turquía se encontraba la app en
-	     español, que fuera de España y Latinoamérica no lee casi nadie. El inglés es el
-	     que más gente puede leer a la fuerza, y `en.lproj` está completo — la paridad de
-	     claves lo verifica en cada pasada de check-localization.sh. Los diez idiomas
-	     traducidos siguen igual: esto solo decide qué pasa con el undécimo. -->
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Ámbar</string>
+	<key>CFBundleExecutable</key>
+	<string>Ambar</string>
+	<key>CFBundleIdentifier</key>
+	<string>dev.rrios.ambar</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>es</string>
@@ -46,15 +25,22 @@
 		<string>ko</string>
 		<string>ru</string>
 	</array>
-
-	<!-- Sin esta clave, pedir acceso al micrófono TERMINA el proceso. El texto
-	     se traduce en los InfoPlist.strings de cada .lproj. -->
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Ámbar uses the microphone only while you dictate. Transcription happens on your Mac, and the audio is neither stored nor sent anywhere.</string>
-
+	<key>CFBundleName</key>
+	<string>Ambar</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.1.1</string>
+	<key>CFBundleVersion</key>
+	<string>3</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>26.0</string>
+	<key>LSUIElement</key>
+	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2026 Roberto Ríos</string>
-
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Ámbar uses the microphone only while you dictate. Transcription happens on your Mac, and the audio is neither stored nor sent anywhere.</string>
 	<key>NSSupportsAutomaticTermination</key>
 	<false/>
 	<key>NSSupportsSuddenTermination</key>

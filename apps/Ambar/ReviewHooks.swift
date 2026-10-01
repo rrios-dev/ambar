@@ -164,6 +164,52 @@ enum ReviewHooks {
     ) -> Bool {
         if showsPanelOnLaunch { controller.show() }
 
+        // `AMBAR_PROBE_DICTATION=N` — runs the start of a real dictation session N times,
+        // without opening the microphone, and reports where it fails. `prepare()` is
+        // the step that answers "Falta el modelo de voz", and the settings probe above
+        // reserves before asking, so it can report "installed" for a session that
+        // still fails.
+        if let rounds = environment("AMBAR_PROBE_DICTATION").flatMap(Int.init) {
+            Task { @MainActor in
+                var lines: [String] = []
+                func report(_ line: String) {
+                    print(line)
+                    lines.append(line)
+                }
+                let mode = model.settings.dictationMode
+                let atypical = model.settings.isAtypicalSpeechEnabled
+                let catalog = SpeechModelCatalog(mode: mode)
+                report("PROBE locale=\(Locale.current.identifier) mode=\(mode.rawValue) atypical=\(atypical)")
+                for round in 1...max(rounds, 1) {
+                    let (_, before) = await catalog.reservation()
+                    let resolved = await catalog.supportedLocale(equivalentTo: Locale.current)
+                    let statusBefore = await catalog.availability(forLocale: Locale.current)
+                    let session = SpeechSession(
+                        locale: Locale.current,
+                        mode: mode,
+                        atypicalSpeech: atypical,
+                        contextualStrings: model.personalDictionary.contextualStrings()
+                    )
+                    do {
+                        try await session.prepare()
+                        report("PROBE \(round) resolved=\(resolved?.identifier ?? "nil") reserved-before=\(before.map(\.identifier)) status-before=\(statusBefore.rawValue) → prepare OK")
+                    } catch {
+                        let ns = error as NSError
+                        report("PROBE \(round) resolved=\(resolved?.identifier ?? "nil") reserved-before=\(before.map(\.identifier)) status-before=\(statusBefore.rawValue) → FAILED \(error) [\(ns.domain) \(ns.code)]")
+                    }
+                    await session.cancel()
+                    let (_, after) = await catalog.reservation()
+                    report("PROBE \(round) reserved-after=\(after.map(\.identifier))")
+                }
+                if let path = reportPath {
+                    try? lines.joined(separator: "\n").appending("\n")
+                        .write(toFile: path, atomically: true, encoding: .utf8)
+                }
+                NSApp.terminate(nil)
+            }
+            return true
+        }
+
         if reportsPermissions {
             Task { @MainActor in
                 var lines: [String] = []
@@ -281,6 +327,7 @@ enum ReviewHooks {
                     // devolvió false en silencio», que son dos defectos opuestos.
                     let diario = Recolector()
                     let original = controller.performSyntheticPaste
+                    controller.pasteTrace = { diario.add("PANEL t \($0)") }
                     controller.performSyntheticPaste = {
                         diario.add("PANEL >> secuencia de pegado EJECUTADA")
                         await original()
@@ -296,8 +343,37 @@ enum ReviewHooks {
                     report("PANEL frontal con el panel abierto=\(frontal())")
                     report("PANEL app anterior=\(controller.previousApplication?.localizedName ?? "ninguna")")
                     report("PANEL panel es clave=\(controller.window?.isKeyWindow ?? false)")
-                    controller.paste(item: item, plainText: false)
+                    if let holdMS = environment("AMBAR_TEST_ENTER_MS").flatMap(Int.init) {
+                        // A real ↵, through the same HID stream as the keyboard, held for
+                        // as long as a finger holds it. Calling `paste` directly skips the
+                        // key event, and the key event is what the user actually sends.
+                        let source = CGEventSource(stateID: .hidSystemState)
+                        CGEvent(keyboardEventSource: source, virtualKey: 36, keyDown: true)?
+                            .post(tap: .cghidEventTap)
+                        diario.add("PANEL ↵ down")
+                        try? await Task.sleep(for: .milliseconds(holdMS))
+                        CGEvent(keyboardEventSource: source, virtualKey: 36, keyDown: false)?
+                            .post(tap: .cghidEventTap)
+                        diario.add("PANEL ↵ up after \(holdMS) ms")
+                    } else {
+                        controller.paste(item: item, plainText: false)
+                    }
                     try? await Task.sleep(for: .seconds(3))
+                    // What the target's text field holds now: anything besides the pasted
+                    // entry is a key that reached it on the way.
+                    let systemWide = AXUIElementCreateSystemWide()
+                    var focused: CFTypeRef?
+                    var value: CFTypeRef?
+                    if AXUIElementCopyAttributeValue(
+                        systemWide, kAXFocusedUIElementAttribute as CFString, &focused
+                    ) == .success, let element = focused {
+                        AXUIElementCopyAttributeValue(
+                            unsafeDowncast(element, to: AXUIElement.self),
+                            kAXValueAttribute as CFString,
+                            &value
+                        )
+                    }
+                    report("PANEL target text=\(String(reflecting: (value as? String) ?? "<unreadable>"))")
                     report("PANEL frontal tras pegar=\(frontal())")
                     report("PANEL tras pegar error=\(model.lastError ?? "ninguno")")
                     // ¿Dónde acabó el ⌘V? Si el panel oculto sigue siendo la ventana clave, se
@@ -307,6 +383,23 @@ enum ReviewHooks {
                     let pegable = NSPasteboard.general.string(forType: .string) ?? "nada"
                     report("PANEL portapapeles=[\(pegable.prefix(40))]")
                     report("PANEL panel sigue siendo clave=\(controller.window?.isKeyWindow ?? false)")
+                    // Reopening right after a paste is what the user does next, and it is
+                    // where a panel taken out of the window order pays its glass again.
+                    for round in 1...3 {
+                        let started = ContinuousClock.now
+                        controller.show(.menu)
+                        let elapsed = ContinuousClock.now - started
+                        report(String(
+                            format: "PANEL reopen %d after paste=%.1f ms",
+                            round,
+                            Double(elapsed.components.seconds) * 1000
+                                + Double(elapsed.components.attoseconds) / 1e15
+                        ))
+                        try? await Task.sleep(for: .milliseconds(300))
+                        controller.hide()
+                        try? await Task.sleep(for: .milliseconds(600))
+                    }
+                    report("PANEL key after final hide=\(controller.window?.isKeyWindow ?? false)")
                     diario.write(to: reportPath.map { $0 + ".secuencia" })
                     if let path = reportPath {
                         try? lines.joined(separator: "\n").appending("\n")

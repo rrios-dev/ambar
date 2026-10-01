@@ -32,7 +32,8 @@ struct HistoryRow: View {
                         Text(source)
                         Text(verbatim: "·")
                     }
-                    Text(item.createdAt, format: .relative(presentation: .numeric))
+                    let age = Self.age(of: item.createdAt)
+                    Text(age.date, format: .relative(presentation: age.presentation))
                 }
                 .font(.system(size: Metrics.FontSize.caption))
                 .lineLimit(1)
@@ -152,12 +153,26 @@ struct HistoryRow: View {
         return String(localized: "row.untitled", defaultValue: "Sin contenido", bundle: .localized)
     }
 
+    /// The date and presentation that describe an entry's age.
+    ///
+    /// Anything younger than a minute reads as "now". The numeric presentation had two
+    /// faults there: a seconds count that is stale the moment it renders, and, for an entry
+    /// stamped a hair after the render read the clock (copied or promoted that same
+    /// instant), "dentro de 0 segundos", an entry from the future. The date is also clamped
+    /// to `now`, so no age is ever in the future.
+    static func age(
+        of date: Date,
+        now: Date = .now
+    ) -> (date: Date, presentation: Date.RelativeFormatStyle.Presentation) {
+        now.timeIntervalSince(date) < 60 ? (now, .named) : (min(date, now), .numeric)
+    }
+
     /// Frase completa para VoiceOver: tipo, contenido, origen y antigüedad.
     private var accessibilityLabel: String {
         var parts: [String] = [item.kind.localizedName, title]
         if let source = item.sourceName { parts.append(source) }
         parts.append(
-            item.createdAt.formatted(.relative(presentation: .named))
+            Self.age(of: item.createdAt).date.formatted(.relative(presentation: .named))
         )
         if item.pinned {
             parts.append(String(localized: "a11y.row.pinned", bundle: .localized))

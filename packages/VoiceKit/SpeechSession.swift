@@ -190,6 +190,43 @@ public actor SpeechSession: TranscriptionSession {
         return resolved
     }
 
+    /// Whether the model for `locale` is installed, asked again after reserving once
+    /// more when the first answer is "not installed".
+    ///
+    /// The status is per app and tied to the reservation, and the reservation is a
+    /// single app-wide flag, not a count. Anything that releases it between our
+    /// `reserve` and this question — another Ámbar process sweeping at launch, an older
+    /// session tearing down — makes an installed model read as `supported` for that
+    /// instant. Measured on 2026-10-01: the model installed, the probe preparing three
+    /// sessions in a row without a failure, and the running app still answering "Falta
+    /// el modelo de voz" after other instances had launched. Failing on the first
+    /// answer turned a passing race into a red banner the user could not fix, because
+    /// there was nothing to install.
+    ///
+    /// Only `supported` and `downloading` are retried. `unsupported` is final, and
+    /// `installed` is the answer. A model that is really missing costs `attempts - 1`
+    /// short pauses before the same error as before.
+    static func confirmInstalled(
+        locale: Locale,
+        in catalog: any ModelCatalog,
+        attempts: Int = 3,
+        pause: Duration = .milliseconds(150)
+    ) async -> Bool {
+        for attempt in 1...max(attempts, 1) {
+            switch await catalog.availability(forLocale: locale) {
+            case .installed:
+                return true
+            case .unsupported:
+                return false
+            case .supported, .downloading:
+                guard attempt < attempts else { return false }
+                _ = try? await catalog.reserve(locale: locale)
+                try? await Task.sleep(for: pause)
+            }
+        }
+        return false
+    }
+
     public func prepare() async throws {
         guard !isCancelled else { throw CancellationError() }
         generation += 1
@@ -242,7 +279,7 @@ public actor SpeechSession: TranscriptionSession {
         guard let resolved = await resolveLocaleOnce() else {
             try await releaseAndThrow(DictationEngineError.localeUnsupported)
         }
-        guard await catalog.availability(forLocale: resolved) == .installed else {
+        guard await Self.confirmInstalled(locale: resolved, in: catalog) else {
             try await releaseAndThrow(DictationEngineError.modelNotInstalled)
         }
 

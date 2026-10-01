@@ -286,9 +286,16 @@ final class AppModel {
         // tres líneas más abajo. Una sola vez y aquí, que es el primer refresco y el único
         // momento en que se puede afirmar que no hay ninguna sesión de dictado viva a la
         // que quitarle el idioma a mitad.
+        // **Except when another Ámbar is alive.** The reservation is per app, not per
+        // process, so a second instance sweeping at launch took the language away from the
+        // one already running: measured on 2026-10-01, the running app answered "Falta el
+        // modelo de voz" with the model installed after other instances had started. It
+        // happens whenever two copies overlap: a relaunch, an update, a build under test.
         if !hasReclaimedStrayReservations {
             hasReclaimedStrayReservations = true
-            await catalog.releaseReservations(keeping: nil)
+            if !anotherInstanceIsRunning() {
+                await catalog.releaseReservations(keeping: nil)
+            }
             reservedLocales = []
         }
 
@@ -559,6 +566,17 @@ final class AppModel {
     /// El arreglo de `permissionProvider` está a cuatro líneas y le faltó al hermano, que
     /// es el patrón que este proyecto lleva rondas cazando.
     var inputDeviceProvider: @MainActor () -> Bool = { MicrophoneAuthorization.hasInputDevice }
+
+    /// Whether another process of this same app is running. Injectable so the launch
+    /// sweep can be tested both ways; see `refreshDictationOffer`.
+    var anotherInstanceIsRunning: @MainActor () -> Bool = {
+        // Only an installed app has siblings worth sparing; a test runner has none.
+        guard Bundle.main.bundleURL.pathExtension == "app",
+              let identifier = Bundle.main.bundleIdentifier else { return false }
+        let mine = ProcessInfo.processInfo.processIdentifier
+        return NSRunningApplication.runningApplications(withBundleIdentifier: identifier)
+            .contains { $0.processIdentifier != mine }
+    }
 
     /// De dónde sale el motor de transcripción del controlador.
     ///
@@ -1154,6 +1172,18 @@ final class AppModel {
     /// - Returns: `true` si había algo que copiar.
     @discardableResult
     func stage(item: ClipboardItem, plainText: Bool) -> Bool {
+        guard writeToPasteboard(item: item, plainText: plainText) else { return false }
+        promote(item: item)
+        return true
+    }
+
+    /// Puts the entry on the pasteboard, and nothing else: the part of `stage` a paste
+    /// has to wait for.
+    func writeToPasteboard(
+        item: ClipboardItem,
+        plainText: Bool,
+        to pasteboard: NSPasteboard = .general
+    ) -> Bool {
         guard let store else { return false }
 
         do {
@@ -1161,24 +1191,33 @@ final class AppModel {
             let payloads = try buildPayloads(from: representations, plainText: plainText)
             guard !payloads.isEmpty else { return false }
 
-            Paster.write(payloads)
+            Paster.write(payloads, to: pasteboard)
             // El monitor debe saber que este cambio lo hicimos nosotros, o
             // volvería a capturar la misma entrada y la duplicaría arriba.
             monitor?.acknowledgeCurrentState()
+            return true
+        } catch {
+            lastError = error.localizedDescription
+            return false
+        }
+    }
 
-            // Usarla la sube al primer puesto (`markUsed`), así que la lista se reordena
-            // bajo el cursor. La selección sigue a la entrada y no al hueco que ocupaba:
-            // sin esto, quedarse en el panel —el caso sin permiso de accesibilidad, donde
-            // solo se copia— dejaba el resaltado sobre la que hubiera bajado a su sitio.
+    /// Moves a used entry to the top of the history.
+    ///
+    /// Usarla la sube al primer puesto (`markUsed`), así que la lista se reordena
+    /// bajo el cursor. La selección sigue a la entrada y no al hueco que ocupaba:
+    /// sin esto, quedarse en el panel —el caso sin permiso de accesibilidad, donde
+    /// solo se copia— dejaba el resaltado sobre la que hubiera bajado a su sitio.
+    func promote(item: ClipboardItem) {
+        guard let store else { return }
+        do {
             try store.markUsed(itemID: item.id)
             refresh()
             if let promoted = items.firstIndex(where: { $0.id == item.id }) {
                 selectedIndex = promoted
             }
-            return true
         } catch {
             lastError = error.localizedDescription
-            return false
         }
     }
 

@@ -272,21 +272,15 @@ final class PanelController {
         #if DEBUG
         stepClock.mark("position")
         #endif
-        // El panel **no se saca del orden de ventanas** al ocultarlo: se vuelve
-        // invisible. Y no es un truco, es la diferencia entre cumplir la promesa central
-        // del producto y no cumplirla.
+        // Whatever `hide()` did, showing undoes it: a panel left in the window order was
+        // made invisible (alpha 0, no mouse, no sharing, content hidden), and one ordered
+        // out keeps its last values, so all of them are set back here.
         //
-        // Medido en esta máquina, con el historial vacío y seis aperturas tras una de
-        // calentamiento: `orderOut` + `makeKeyAndOrderFront` con el material de cristal
-        // cuesta **758 ms de mediana**, cada vez, y es el 99 % del camino de aparición
-        // (la consulta al historial son 0,16 ms). Sin cristal, 2,4 ms. Con cristal pero
-        // sin sacarla del orden, **0,42 ms**. El coste no es crear la ventana —se
-        // reutiliza— sino que el servidor de ventanas vuelva a materializar el cristal
-        // cada vez que entra al orden.
-        //
-        // Contrapartida honesta: queda una ventana invisible en el nivel flotante. Por eso
-        // se le quitan los eventos de ratón mientras está oculta, para que no intercepte
-        // clics que no le corresponden.
+        // History of that split: `hide()` once never ordered the panel out, because
+        // `orderOut` + `makeKeyAndOrderFront` with the glass material measured 758 ms per
+        // opening against 0.42 ms in place. Measured again on macOS 26 on 2026-10-01,
+        // reopening after `orderOut` takes ~16 ms, so `hide()` now orders out whenever it
+        // holds the keyboard (see there) and only stays in place when it does not.
         panel.alphaValue = 1
         panel.ignoresMouseEvents = false
         panel.sharingType = .readOnly
@@ -363,17 +357,31 @@ final class PanelController {
         removeKeyMonitor()
         model.onPanelDismissedForTesting?()
         model.dictation?.panelDismissed()
-        // Invisible, pero **sin salir del orden**: volver a entrar cuesta 758 ms por el
-        // material de cristal. Ver la nota en `show()`.
+        isVisible = false
+
+        // With the keyboard: out of the window order, at once.
         //
-        // Y hay que devolver el teclado a mano. `orderOut` lo hacía gratis; con la ventana
-        // todavía en el orden, medido, se queda de ventana clave **siendo invisible**, que
-        // es mucho peor que la lentitud que esto arregla: lo que el usuario teclea iría a
-        // una ventana que no ve.
-        // **Solo si el teclado era nuestro.** Si el panel ya había dejado de ser la
-        // ventana clave —el usuario cerró clicando en otra app— activar la anterior le
-        // robaría el foco a la que acaba de elegir.
-        let hadKeyboard = panel?.isKeyWindow ?? false
+        // This used to make the panel invisible in place (alpha 0) and hope that
+        // activating the previous app would take the keyboard back, with a timer ordering
+        // it out 120 ms later if not. The panel is non-activating, so the previous app
+        // never stopped being active and that activation was a no-op: measured on
+        // 2026-10-01, the panel stayed key until the timer fired, on every paste. That held
+        // the ⌘V back ~155 ms, and any key pressed meanwhile (the ↵ auto-repeat, the next
+        // word typed) went to a window nobody could see, which answers with the system beep.
+        //
+        // Staying in the order was meant to save the 758 ms the glass used to cost on
+        // re-entry. Measured again on macOS 26 the same day: reopening after `orderOut`
+        // takes ~16 ms, one frame. And going straight to `orderOut` skips the alpha,
+        // sharing and content steps below, which cost ~15 ms of a paste for a window that
+        // is about to leave the screen anyway.
+        if panel?.isKeyWindow == true {
+            panel?.orderOut(nil)
+            returnKeyboardToPreviousApplication()
+            return
+        }
+
+        // Without the keyboard (the user clicked into another app): invisible in place,
+        // since nothing is waiting on it and there is no focus to hand back.
         panel?.alphaValue = 0
         panel?.ignoresMouseEvents = true
         // Y **fuera de capturas y selectores de ventana**, que es la garantía documentada y
@@ -382,57 +390,23 @@ final class PanelController {
         // que un selector de «compartir ventana» sigue mostrando una entrada de Ámbar.
         // `sharingType = .none` es el mecanismo directo, y estaba a mano sin usar.
         panel?.sharingType = .none
-        // Y el CONTENIDO se oculta, no solo la ventana.
-        //
-        // La ventana ya no sale del orden —cuesta 758 ms volver a entrar por el material de
-        // cristal—, y eso tiene un precio medido: el sistema la sigue ofreciendo como
-        // «ventana en pantalla», así que los selectores de compartir ventana la enumeran.
-        // Con la superficie conservando el último fotograma, lo que enumeran es **el
-        // historial**: las vistas previas de todo lo copiado.
-        //
-        // Ocultar la vista de contenido deja la superficie sin nada que enseñar y conserva
-        // el cristal caliente. No hace falta elegir entre la latencia y esto.
+        // Y el CONTENIDO se oculta, no solo la ventana: con la superficie conservando el
+        // último fotograma, lo que un selector de compartir ventana enumeraría es **el
+        // historial**, las vistas previas de todo lo copiado.
         hostingView?.isHidden = true
-        isVisible = false
-        if hadKeyboard {
-            // Se intenta devolver el teclado a quien lo tenía. Si no hay a quién —la app
-            // anterior murió, o era la propia Ámbar con Ajustes delante— **se saca la
-            // ventana del orden**, aunque eso cueste los 758 ms de la próxima apertura.
-            //
-            // Una ventana invisible que retiene el teclado se come lo que el usuario escriba
-            // sin que vea dónde va. Entre eso y una apertura lenta no hay debate: medido,
-            // con la app anterior ausente el panel se quedaba de ventana clave.
-            _ = returnKeyboardToPreviousApplication()
-            // Y se comprueba el **resultado**, no la llamada: medido, `activate()` devuelve
-            // `true` y el panel sigue siendo la ventana clave. Se mira un instante después
-            // —la activación es asíncrona— y si el teclado sigue aquí, la ventana sale del
-            // orden aunque eso cueste 758 ms en la próxima apertura.
-            verifyKeyboardWasHandedOver()
-        }
-    }
-
-    /// Red de seguridad del teclado.
-    ///
-    /// Una ventana invisible que retiene el teclado se come lo que el usuario escriba sin que
-    /// vea dónde va: es peor que cualquier lentitud, así que si la entrega no funcionó se
-    /// paga el precio de sacar la ventana del orden.
-    private func verifyKeyboardWasHandedOver() {
-        Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .milliseconds(120))
-            guard let self, !self.isVisible, self.panel?.isKeyWindow == true else { return }
-            self.panel?.orderOut(nil)
-        }
     }
 
     /// Devuelve el teclado a la app que lo tenía antes de abrir el panel.
     ///
-    /// - Returns: `false` si no había a quién devolvérselo.
-    private func returnKeyboardToPreviousApplication() -> Bool {
+    /// Only needed when that app is not active any more; the panel is non-activating,
+    /// so normally it still is, and activating it again would be wasted work.
+    private func returnKeyboardToPreviousApplication() {
         guard let previous = previousApplication,
               !previous.isTerminated,
+              !previous.isActive,
               previous.processIdentifier != ProcessInfo.processInfo.processIdentifier
-        else { return false }
-        return previous.activate()
+        else { return }
+        previous.activate()
     }
 
     /// Coloca el panel donde el usuario lo dejó, o centrado si aún no lo movió.
@@ -584,8 +558,16 @@ final class PanelController {
         // permiso del sistema el panel desaparecería justo cuando el usuario acaba
         // de conceder. Ver `PanelDismissalPolicy`.
         panel.onCancel = { [weak self] in self?.hide() }
+        panel.onUnhandledEvent = { [weak self] selector in
+            // Only a key nobody took beeps; unhandled mouse moves are routine.
+            guard selector == #selector(NSResponder.keyDown(with:)) else { return }
+            self?.tracePaste("keyDown nobody handled → system beep")
+        }
         panel.onResignKey = { [weak self] in
-            guard let self, self.dismissalPolicy.shouldHideOnResignKey else { return }
+            // `hide()` itself orders the panel out, which resigns key and lands here:
+            // without the visibility check every dismissal would run twice.
+            guard let self, self.isVisible, self.dismissalPolicy.shouldHideOnResignKey
+            else { return }
             self.hide()
         }
         observeMovement(of: panel)
@@ -669,7 +651,7 @@ final class PanelController {
         pointerMonitor = nil
     }
 
-    private func handle(_ event: NSEvent) -> Bool {
+    func handle(_ event: NSEvent) -> Bool {
         let command = event.modifierFlags.contains(.command)
 
         // ⌘D dicta, para o descarta según el estado, sin mantener nada. Es la vía por
@@ -742,7 +724,7 @@ final class PanelController {
                 return true
             }
             guard let item = model.selectedItem else { return true }
-            paste(item: item, plainText: command)
+            paste(item: item, plainText: command, afterReleasing: CGKeyCode(event.keyCode))
             return true
 
         case 51 where command && dictationDiscards:  // ⌘⌫ con el micrófono abierto
@@ -757,9 +739,53 @@ final class PanelController {
             if let item = model.selectedItem { model.togglePin(item: item) }
             return true
 
+        case 8 where command && !event.modifierFlags.contains(.shift):  // ⌘C
+            // ⌘C copies the selected entry, the way anyone expects it to in a clipboard
+            // history. Without this it fell through to the search field, which has nothing
+            // selected to copy, and AppKit answered with the system beep: the "bip al
+            // copiar" reported on 2026-10-01. Text selected in the search field still
+            // copies as text.
+            if searchFieldHasSelection { return false }
+            if let item = model.selectedItem { copy(item: item) }
+            return true
+
         default:
             return false
         }
+    }
+
+    /// Pastes once the key that asked for it is back up. See `Paster.waitForKeyRelease`.
+    private func paste(item: ClipboardItem, plainText: Bool, afterReleasing keyCode: CGKeyCode) {
+        // One paste per keystroke: a second ↵ while the first is still held would queue
+        // a second paste of the same entry.
+        guard !isAwaitingKeyRelease else { return }
+        isAwaitingKeyRelease = true
+        pasteStartedAt = .now
+        tracePaste("↵ down")
+        Task { @MainActor in
+            await Paster.waitForKeyRelease(keyCode)
+            self.isAwaitingKeyRelease = false
+            self.tracePaste("↵ up")
+            self.paste(item: item, plainText: plainText, startedAt: self.pasteStartedAt)
+        }
+    }
+
+    /// Whether the search field has text selected, which ⌘C should copy as text.
+    private var searchFieldHasSelection: Bool {
+        guard let editor = panel?.firstResponder as? NSTextView else { return false }
+        return editor.selectedRange().length > 0
+    }
+
+    /// Puts the entry on the clipboard and closes the panel, without pasting it anywhere.
+    ///
+    /// The same staging as a paste, minus the ⌘V: the write is all that has to happen
+    /// before the panel goes, and moving the entry to the top happens after.
+    func copy(item: ClipboardItem) {
+        guard model.writeToPasteboard(item: item, plainText: false, to: pasteboard()) else {
+            return
+        }
+        hide()
+        model.promote(item: item)
     }
 
     // MARK: - Pegado
@@ -772,7 +798,7 @@ final class PanelController {
     /// que: dejar el contenido puesto, cerrar el panel, esperar a que la app de
     /// destino esté realmente activa —no un plazo fijo, que unas veces llega y
     /// otras no— y solo entonces enviar el atajo.
-    func paste(item: ClipboardItem, plainText: Bool) {
+    func paste(item: ClipboardItem, plainText: Bool, startedAt: ContinuousClock.Instant? = nil) {
         // Sin permiso no se puede pegar. En vez de cerrar el panel y no hacer
         // nada —que se lee como que la app está rota—, el contenido se copia,
         // el panel se queda abierto y el aviso del pie llama la atención.
@@ -782,12 +808,23 @@ final class PanelController {
             return
         }
 
-        guard model.stage(item: item, plainText: plainText) else { return }
+        pasteStartedAt = startedAt ?? .now
+        tracePaste("paste requested")
+        // Only the pasteboard write sits before the paste. Promoting the entry to the top
+        // of the history re-queries and re-lays out the list, and nobody sees that list
+        // until the next opening, so it runs after the ⌘V has left.
+        guard model.writeToPasteboard(item: item, plainText: plainText, to: pasteboard()) else {
+            return
+        }
+        tracePaste("staged")
 
         hide()
+        tracePaste("hidden")
 
         Task { @MainActor in
             await performSyntheticPaste()
+            model.promote(item: item)
+            tracePaste("promoted")
         }
     }
 
@@ -836,6 +873,19 @@ final class PanelController {
     /// camino y le faltaba al hermano.
     var pasteboard: @MainActor () -> NSPasteboard = { .general }
 
+    /// Review-only timeline of the paste sequence: each step with the milliseconds since
+    /// the paste began. Nil in normal use, so it costs one optional check per step.
+    var pasteTrace: (@MainActor (String) -> Void)?
+    private var pasteStartedAt: ContinuousClock.Instant?
+    private var isAwaitingKeyRelease = false
+
+    private func tracePaste(_ step: String) {
+        guard let pasteTrace else { return }
+        let elapsed = pasteStartedAt.map { ContinuousClock.now - $0 } ?? .zero
+        let ms = Double(elapsed.components.attoseconds) / 1e15 + Double(elapsed.components.seconds) * 1000
+        pasteTrace(String(format: "%7.1f ms  %@  key=%@", ms, step, panel?.isKeyWindow == true ? "panel" : "other"))
+    }
+
     lazy var performSyntheticPaste: @MainActor () async -> Void = { [weak self] in
         guard let self else { return }
         // PRIMERO: que el panel deje de ser la ventana clave.
@@ -852,13 +902,17 @@ final class PanelController {
         // permiso, ni el post— y el contenido quedaba en el portapapeles, así que el usuario
         // veía «no pega» sin ningún error.
         await self.waitUntilPanelResignsKey()
+        self.tracePaste("panel resigned key")
         await self.returnFocusToPreviousApplication()
+        self.tracePaste("previous app active")
         // Y se espera a que el **teclado** vuelva a la app de destino, que no es lo mismo que
         // esté activa: nunca dejó de estarlo, así que `isActive` no distinguía nada.
         if let pid = self.previousApplication?.processIdentifier {
             await Paster.waitForKeyboardFocus(pid: pid)
         }
+        self.tracePaste("keyboard focus back")
         await Paster.waitForModifiersToClear()
+        self.tracePaste("modifiers clear")
         // **El resultado se mira.** Se descartaba, y con él la única señal de que el pegado
         // no llegó a enviarse: el panel se cerraba, no pasaba nada, y desde fuera eso es
         // indistinguible de una app rota. El contenido sí está en el portapapeles —se escribe
@@ -870,6 +924,7 @@ final class PanelController {
             self.show(.menu)
             return
         }
+        self.tracePaste("⌘V posted")
     }
 
     func pasteDictated(_ plan: DictationDelivery) {
@@ -961,5 +1016,13 @@ final class AmbarPanel: NSPanel {
     /// poder salir.
     override func cancelOperation(_ sender: Any?) {
         onCancel?()
+    }
+
+    /// Review-only: an event no responder took, which AppKit answers with a beep.
+    var onUnhandledEvent: ((Selector) -> Void)?
+
+    override func noResponder(for eventSelector: Selector) {
+        onUnhandledEvent?(eventSelector)
+        super.noResponder(for: eventSelector)
     }
 }
