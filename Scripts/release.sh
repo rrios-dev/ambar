@@ -5,7 +5,7 @@
 #
 # POR QUÉ EXISTE
 #
-# Todo esto vivía solo en prosa (`docs/ambar-lanzamiento.md`). Una auditoría
+# Todo esto vivía solo en prosa (`docs/initiatives/ambar/lanzamiento.md`). Una auditoría
 # independiente lo señaló: la cadena estaba escrita y **nunca se había ejecutado**, así
 # que no se sabía si era correcta ni en qué punto exacto fallaría. Un procedimiento que
 # nadie ha corrido es una intención, no un procedimiento.
@@ -122,10 +122,15 @@ preflight() {
   # cadenas del grabador de atajos —la ventana desde la que se activa el dictado— y nadie
   # las enumeraba: borrar un idioma entero de AppCore pasaba este ✓, que además decía «los
   # 10 idiomas viajan dentro del bundle».
-  local faltan=0
+  # Xcode 27's SwiftPM builds each resource bundle with the full macOS layout
+  # (`Contents/Resources/<lang>.lproj`); earlier versions left the folders at its root.
+  # Both are valid bundles and `Bundle(url:)` reads either, so either layout passes.
+  local faltan=0 root
   for bundle in Ambar_Ambar Ambar_AppCore; do
+    root="$APP/Contents/Resources/$bundle.bundle"
+    [ -d "$root/Contents/Resources" ] && root="$root/Contents/Resources"
     for lang in es en fr de it pt-br ja zh-hans ko ru; do
-      test -d "$APP/Contents/Resources/$bundle.bundle/$lang.lproj" || {
+      test -d "$root/$lang.lproj" || {
         echo "  falta $lang en $bundle.bundle" >&2
         faltan=$((faltan + 1))
       }
@@ -207,6 +212,12 @@ require_credentials() {
     *"$DEVELOPER_ID"*) : ;;
     *) fail "la identidad «${DEVELOPER_ID}» no está en el llavero" ;;
   esac
+  # Signed by SHA-1, not by name: on macOS 27 a name with a non-ASCII letter ("Ríos")
+  # reaches codesign mis-encoded and it finds no identity. DEVELOPER_ID keeps the name
+  # for the messages; it may also be given as the SHA-1 itself.
+  DEVELOPER_ID_HASH="$(awk -v name="\"$DEVELOPER_ID\"" 'index($0, name) { print $2; exit }' <<<"$identidades")"
+  [[ "$DEVELOPER_ID" =~ ^[0-9A-F]{40}$ ]] && DEVELOPER_ID_HASH="$DEVELOPER_ID"
+  [ -n "$DEVELOPER_ID_HASH" ] || fail "no se encontró la huella de «${DEVELOPER_ID}» en el llavero"
   ok "credenciales presentes"
 }
 
@@ -220,7 +231,7 @@ full_release() {
   # antes, de dentro hacia fuera.
   codesign --force --options runtime --timestamp \
     --entitlements "$ROOT/apps/Ambar/Ambar.entitlements" \
-    --sign "$DEVELOPER_ID" "$APP"
+    --sign "$DEVELOPER_ID_HASH" "$APP"
   codesign --verify --strict "$APP" || fail "la firma con Developer ID no verifica"
   ok "firmado y sellado con marca de tiempo"
 
@@ -266,7 +277,7 @@ dmg_release() {
 
   # El empaquetado y su verificación viven en `make-dmg.sh`, que además firma la imagen si se
   # le da la identidad. Aquí solo se le pasa y se notariza el resultado.
-  CODESIGN_IDENTITY="$DEVELOPER_ID" "$ROOT/Scripts/make-dmg.sh" \
+  CODESIGN_IDENTITY="$DEVELOPER_ID_HASH" "$ROOT/Scripts/make-dmg.sh" \
     || fail "el empaquetado del DMG falló"
 
   local version

@@ -522,8 +522,12 @@ struct CapabilityProbeTests {
         // Formato `Mac16,10` o similar: lo que importa es que distinga modelos.
         #expect(machine.contains(","))
 
+        // The running system's major.minor, whatever release it is: pinning "26." broke
+        // the test on macOS 27 without anything being wrong.
         let version = CapabilityProbe.systemVersion()
-        #expect(version.hasPrefix("26."), "versión inesperada: \(version)")
+        let running = ProcessInfo.processInfo.operatingSystemVersion
+        #expect(version == "\(running.majorVersion).\(running.minorVersion)", "unexpected version: \(version)")
+        #expect(running.majorVersion >= 26, "Ámbar requires macOS 26 or later")
     }
 
     @Test("sintetiza audio de referencia audible", .enabled(

@@ -311,6 +311,8 @@ struct SettingsView: View {
                 }
             }
 
+            AgentsSection(service: model.agents)
+
             Section(String(localized: "settings.permissions", bundle: .localized)) {
                 HStack {
                     Image(systemName: model.canAutoPaste ? "checkmark.circle.fill" : "xmark.circle.fill")

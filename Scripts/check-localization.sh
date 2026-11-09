@@ -15,6 +15,30 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STATUS=0
 
+# Every path can be pointed at another app of the same shape; the defaults are this
+# package's own app, so running the script bare checks exactly what it always checked.
+#   LOCALIZATION_SCAN_ROOT         tree whose apps/ and packages/ are scanned for keys
+#   LOCALIZATION_APP_RESOURCES     the app's .lproj folders
+#   LOCALIZATION_APP_PLIST         the Info.plist whose CFBundleLocalizations is the census
+#   LOCALIZATION_INFOPLIST_RESOURCES  where the app's InfoPlist.strings live
+#   LOCALIZATION_PACKAGES          resource folders of packages, as dir=name, ':'-separated
+#   LOCALIZATION_PACKAGE_LANGUAGES exact (default) or superset: a shared package may carry
+#                                  more languages than the app announces, never fewer
+#   LOCALIZATION_CATALOGS          reference catalogs for unknown keys, ':'-separated
+#   LOCALIZATION_BASE              the reference language (es)
+#   LOCALIZATION_MIN_CALLS, LOCALIZATION_EXTRA_USE, LOCALIZATION_ALLOWLIST: see the
+#                                  Python helpers.
+SCAN_ROOT="${LOCALIZATION_SCAN_ROOT:-$ROOT}"
+APP_RESOURCES="${LOCALIZATION_APP_RESOURCES:-$ROOT/apps/Ambar/Resources}"
+APP_PLIST="${LOCALIZATION_APP_PLIST:-$ROOT/apps/Ambar/Info.plist}"
+INFOPLIST_RESOURCES="${LOCALIZATION_INFOPLIST_RESOURCES:-$APP_RESOURCES}"
+PACKAGES="${LOCALIZATION_PACKAGES:-$ROOT/packages/AppCore/Resources=AppCore}"
+PACKAGE_LANGUAGES="${LOCALIZATION_PACKAGE_LANGUAGES:-exact}"
+CATALOGS="${LOCALIZATION_CATALOGS:-$ROOT/apps/Ambar/Resources/es.lproj/Localizable.strings:$ROOT/apps/Ambar/Resources/es.lproj/Localizable.stringsdict:$ROOT/packages/AppCore/Resources/es.lproj/Localizable.strings}"
+BASE="${LOCALIZATION_BASE:-es}"
+MIN_CALLS="${LOCALIZATION_MIN_CALLS:-50}"
+export LOCALIZATION_MIN_CALLS="$MIN_CALLS"
+
 # `String(localized:)` sin `bundle:` se resuelve contra Bundle.main, donde NO están
 # las cadenas: SwiftPM las empaqueta en Ambar_Ambar.bundle. El síntoma es que la
 # interfaz muestra el identificador de la clave en crudo, en todos los idiomas —y
@@ -27,7 +51,7 @@ check_bundle_argument() {
   # Se escanea la llamada completa con paréntesis balanceados.
   local offenders
   offenders="$(
-    python3 - "$ROOT" <<'PYEOF'
+    python3 - "$SCAN_ROOT" <<'PYEOF'
 import re, sys, pathlib
 root = pathlib.Path(sys.argv[1])
 bad = []
@@ -74,7 +98,7 @@ PYEOF
   # idéntico al de un árbol impecable. Lo midió una auditoría independiente.
   local scanned
   scanned="$(
-    python3 - "$ROOT" <<'PYEOF'
+    python3 - "$SCAN_ROOT" <<'PYEOF'
 import re, sys, pathlib
 root = pathlib.Path(sys.argv[1])
 opening = re.compile(r'String\(\s*localized:\s*"[^"]+"', re.S)
@@ -90,10 +114,9 @@ PYEOF
   # la clave no está no hay idioma que la tenga. El criterio vive en `unknown-keys.py`.
   local desconocidas
   desconocidas="$(
-    python3 "$ROOT/Scripts/unknown-keys.py" "$ROOT" \
-      "$ROOT/apps/Ambar/Resources/es.lproj/Localizable.strings" \
-      "$ROOT/apps/Ambar/Resources/es.lproj/Localizable.stringsdict" \
-      "$ROOT/packages/AppCore/Resources/es.lproj/Localizable.strings" || true
+    local catalogs
+    IFS=':' read -r -a catalogs <<< "$CATALOGS"
+    python3 "$ROOT/Scripts/unknown-keys.py" "$SCAN_ROOT" "${catalogs[@]}" || true
   )"
   if [ -n "$desconocidas" ]; then
     echo "✗ claves que no existen en el catálogo — la app pintaría el identificador en crudo:"
@@ -101,7 +124,7 @@ PYEOF
     STATUS=1
   fi
 
-  if [ "$scanned" -lt 50 ]; then
+  if [ "$scanned" -lt "$MIN_CALLS" ]; then
     echo "✗ solo se inspeccionaron $scanned llamadas a String(localized:): este control no ha mirado el árbol"
     STATUS=1
   elif [ -n "$offenders" ]; then
@@ -136,12 +159,12 @@ keys_of() {
 # exige igualdad de conjuntos en las dos direcciones: falta uno prometido, o sobra uno sin
 # prometer.
 check_language_census() {
-  local resources="$1" name="$2"
+  local resources="$1" name="$2" mode="${3:-exact}"
   # El censo es siempre el `Info.plist` de la app: es la promesa que el bundle le hace al
   # sistema, y los paquetes tienen que cumplirla igual. Correrlo solo para la app dejaba
   # borrar un idioma entero de `AppCore` sin que nada se enterara — el usuario coreano veía
   # el grabador de atajos, la ventana desde la que se activa el dictado, en español.
-  local plist="$ROOT/apps/Ambar/Info.plist"
+  local plist="$APP_PLIST"
 
   local anunciados presentes
   anunciados="$(
@@ -162,6 +185,20 @@ check_language_census() {
     return
   fi
 
+  if [ "$mode" = "superset" ]; then
+    # A shared package ships every language it has; the app's promise is only that the
+    # ones it announces are there.
+    local ausentes
+    ausentes="$(comm -23 <(printf '%s\n' "$anunciados") <(printf '%s\n' "$presentes"))"
+    if [ -n "$ausentes" ]; then
+      echo "  ✗ $name: missing languages the app announces:"
+      printf '%s\n' "$ausentes" | sed 's/^/      /'
+      STATUS=1
+      return
+    fi
+    echo "▸ $name — the $n announced languages are present (the package may carry more)"
+    return
+  fi
   if [ "$anunciados" != "$presentes" ]; then
     echo "  ✗ $name: los idiomas del bundle no son los que Info.plist anuncia"
     diff <(printf '%s\n' "$anunciados") <(printf '%s\n' "$presentes") \
@@ -484,19 +521,21 @@ check_infoplist_parity() {
   echo "▸ $name — $checked InfoPlist.strings comprobados"
 }
 
-check_bundle "$ROOT/apps/Ambar/Resources" "app" "es"
-check_bundle "$ROOT/packages/AppCore/Resources" "AppCore" "es"
-check_language_census "$ROOT/apps/Ambar/Resources" "app"
-check_language_census "$ROOT/packages/AppCore/Resources" "AppCore"
-check_strings_syntax "$ROOT/apps/Ambar/Resources" "app"
-check_strings_syntax "$ROOT/packages/AppCore/Resources" "AppCore"
-check_values "$ROOT/apps/Ambar/Resources" "app" "es"
-check_values "$ROOT/packages/AppCore/Resources" "AppCore" "es"
-check_format_specifiers "$ROOT/apps/Ambar/Resources" "app" "es"
-check_format_specifiers "$ROOT/packages/AppCore/Resources" "AppCore" "es"
-check_plural_categories "$ROOT/apps/Ambar/Resources" "app"
-check_plural_categories "$ROOT/packages/AppCore/Resources" "AppCore"
-check_infoplist_parity "$ROOT/apps/Ambar/Resources" "app" "es"
+IFS=':' read -r -a package_entries <<< "$PACKAGES"
+
+check_bundle "$APP_RESOURCES" "app" "$BASE"
+for entry in "${package_entries[@]}"; do check_bundle "${entry%%=*}" "${entry#*=}" "$BASE"; done
+check_language_census "$APP_RESOURCES" "app"
+for entry in "${package_entries[@]}"; do check_language_census "${entry%%=*}" "${entry#*=}" "$PACKAGE_LANGUAGES"; done
+check_strings_syntax "$APP_RESOURCES" "app"
+for entry in "${package_entries[@]}"; do check_strings_syntax "${entry%%=*}" "${entry#*=}"; done
+check_values "$APP_RESOURCES" "app" "$BASE"
+for entry in "${package_entries[@]}"; do check_values "${entry%%=*}" "${entry#*=}" "$BASE"; done
+check_format_specifiers "$APP_RESOURCES" "app" "$BASE"
+for entry in "${package_entries[@]}"; do check_format_specifiers "${entry%%=*}" "${entry#*=}" "$BASE"; done
+check_plural_categories "$APP_RESOURCES" "app"
+for entry in "${package_entries[@]}"; do check_plural_categories "${entry%%=*}" "${entry#*=}"; done
+check_infoplist_parity "$INFOPLIST_RESOURCES" "app" "$BASE"
 
 # El resumen va al FINAL, después de todas las comprobaciones: antes se imprimía
 # «✓ Todos los idiomas tienen las mismas claves» y solo después corría la guarda del

@@ -69,6 +69,24 @@ dictionary is a file of its own, on your Mac, and survives clearing the history.
 Dictation is off by default. Turning it on asks for the microphone from Settings, never
 from the shortcut.
 
+## Agents (Claude Code, Codex)
+
+Ámbar can be used from Claude Code, Codex or any MCP client: "find the link about the
+invoice I copied yesterday", "what did that screenshot say?", "add Forgejo to my
+dictionary". Turn it on in **Settings › Agents** and press **Connect**, or register it
+yourself:
+
+```bash
+claude mcp add --scope user ambar -- /Applications/Ambar.app/Contents/MacOS/ambar-mcp
+```
+
+The agent can search the history (text, links, files, and the text read from images), open
+an item in full — images go downscaled —, read your dictation dictionary, teach it a word,
+and copy a text to the clipboard; the last two the agent asks you about first. It never
+deletes anything, and what password managers copy is never kept. Off by default; Settings
+shows which agent used what, and when. What the agent reads goes to that agent's model —
+Ámbar itself still makes no network requests.
+
 ## Requirements
 
 macOS 26 or later, on Apple Silicon.

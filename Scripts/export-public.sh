@@ -14,11 +14,19 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST="${1:?usage: export-public.sh <destination>}"
 mkdir -p "$DEST"
 
+# Top-level directories that opt out of the export by holding a tracked `.not-exported`
+# marker file. The rule is generic on purpose: a project that shares `native/` but is not
+# public is skipped without this script having to name it.
+not_exported=" $( cd "$ROOT" && git ls-files -- '*/.not-exported' | awk -F/ 'NF == 2 { printf "%s ", $1 }' )"
+
 # Everything tracked under native/, minus what is not Ámbar or not meant to be public.
 find "$DEST" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 ( cd "$ROOT" && git ls-files -z . ) | while IFS= read -r -d '' file; do
   case "$file" in
     argos/*|public/*) continue ;;
+  esac
+  case "$not_exported" in
+    *" ${file%%/*} "*) continue ;;
   esac
   mkdir -p "$DEST/$(dirname "$file")"
   cp -p "$ROOT/$file" "$DEST/$file"
@@ -31,7 +39,7 @@ cp "$ROOT/public/README.md" "$DEST/README.md"
 cp "$ROOT/public/gitignore" "$DEST/.gitignore"
 cp "$ROOT/public/github-workflows/ci.yml" "$DEST/.github/workflows/ci.yml"
 for doc in ambar-dictado.md ambar-icono.md; do
-  cp "$ROOT/../docs/$doc" "$DEST/docs/$doc"
+  cp "$ROOT/../docs/initiatives/ambar/${doc#ambar-}" "$DEST/docs/$doc"
 done
 sips -s format png "$ROOT/apps/Ambar/Resources/AppIcon.icns" --resampleWidth 256 \
   --out "$DEST/docs/icon.png" >/dev/null

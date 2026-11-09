@@ -231,3 +231,21 @@
 /* Reinício após conceder a permissão */
 "permission.restart_needed" = "Você concedeu a permissão com o Ámbar aberto. Reinicie o app para a colagem automática funcionar.";
 "permission.restart" = "Reiniciar";
+
+/* Settings › Agents (docs/initiatives/mac-apps-mcp/DESIGN.md) */
+"agents.section" = "Agentes";
+"agents.toggle" = "Permitir que Claude Code, Codex e outros agentes usem o Ámbar";
+"agents.help" = "Eles poderão pesquisar seu histórico e ler o que você copiou (também imagens e o texto delas), ver seu dicionário, adicionar palavras e copiar texto para a área de transferência. Nunca apagam nada. O que os gerenciadores de senhas copiam nunca é guardado.";
+"agents.privacy" = "O que o agente lê sai do seu Mac para o modelo desse agente (Anthropic, OpenAI…). É uma permissão, não um cadeado: qualquer programa do seu usuário pode ler esses arquivos.";
+"agents.connect" = "Conectar";
+"agents.disconnect" = "Desconectar";
+"agents.connect.help" = "Usa o comando de cada agente. Se preferir fazer você mesmo, no Terminal:";
+"agents.connected %@" = "Conectado ao %@. Reinicie-o para que veja as ferramentas do Ámbar.";
+"agents.disconnected %@" = "Desconectado do %@.";
+"agents.notInstalled %@" = "%@ não está instalado ou não está no seu PATH.";
+"agents.failed %@" = "Não deu certo: %@";
+"agents.log" = "Acessos recentes";
+"agents.log.empty" = "Nenhum agente usou o Ámbar ainda.";
+"agents.log.refused" = "Recusado";
+"agents.log.clear" = "Apagar registro";
+"agents.client.unknown" = "Um agente";

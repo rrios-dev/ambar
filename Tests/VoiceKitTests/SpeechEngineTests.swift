@@ -166,8 +166,11 @@ struct SpeechEngineTests {
         defer { try? FileManager.default.removeItem(at: url) }
 
         let transcript = try await Self.transcribe(url)
+        // The point is that a word arrives after "con", not how the model spells the
+        // brand: since the macOS 27 speech model it hears "Ámbar" as "amar" (2026-10-25).
+        // Four letters at least, so a cut word ("Amb") still fails.
         #expect(
-            transcript.text.lowercased().contains("ámbar"),
+            transcript.text.lowercased().range(of: #"\bcon \p{L}{4,}"#, options: .regularExpression) != nil,
             "se perdió la última palabra: «\(transcript.text)»"
         )
     }

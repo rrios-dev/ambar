@@ -1,0 +1,15 @@
+{
+  "originHash" : "1df35ee7e4316fa40e2b3056781cb709849c24e3b0fc233e9f34cba706935360",
+  "pins" : [
+    {
+      "identity" : "mcpkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rrios-dev/mcpkit.git",
+      "state" : {
+        "revision" : "acb0f469dfe165a90aca19dc88cf9bdfd004f6e2",
+        "version" : "0.2.0"
+      }
+    }
+  ],
+  "version" : 3
+}

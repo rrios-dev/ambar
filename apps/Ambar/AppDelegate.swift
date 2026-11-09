@@ -457,8 +457,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             // lo único que garantiza el ciclo de vida completo.
             window.contentViewController = NSHostingController(rootView: SettingsView(model: model))
             settingsWindowDidAppear()
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate()
+            WindowFocus.bringForward(window)
             return
         }
 
@@ -473,8 +472,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         settingsWindow = window
 
         settingsWindowDidAppear()
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate()
+        // `NSApp.activate()` alone left Settings behind the frontmost app (2026-11-09).
+        WindowFocus.bringForward(window)
     }
 
     /// Lo que hay que refrescar cada vez que Ajustes se abre.

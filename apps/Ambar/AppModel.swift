@@ -859,11 +859,15 @@ final class AppModel {
     /// survive a full history wipe, because it is something the user taught the app.
     let personalDictionary: PersonalDictionary
 
+    /// Agent access over MCP (docs/initiatives/mac-apps-mcp/DESIGN.md): off by default.
+    let agents: AgentService
+
     init(settings: Settings = Settings()) {
         self.settings = settings
         self.personalDictionary = PersonalDictionary(
             directory: Self.applicationSupportDirectory()
         )
+        self.agents = AgentService(directory: Self.applicationSupportDirectory(), dictionary: personalDictionary)
     }
 
     // MARK: - Ciclo de vida
@@ -887,6 +891,7 @@ final class AppModel {
     }
 
     func start() {
+        agents.start()
         // Si el dictado quedó activado de la sesión anterior, hay que **volver a mirar** al
         // arrancar. `dictationOffer` nace `nil` —«todavía no comprobado»— y `dictationCanRun`
         // trata `nil` como no, con razón: el gesto es el camino que nadie pidió y ante la

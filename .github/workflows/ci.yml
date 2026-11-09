@@ -1,5 +1,9 @@
 name: ci
 
+# Copied to github.com/rrios-dev/ambar by Scripts/export-public.sh. The checks
+# themselves live in Scripts/ci.sh, the same script run before merging in the
+# monorepo, so this file only picks the machine.
+
 on:
   pull_request:
   push:
@@ -21,12 +25,4 @@ jobs:
         run: |
           xcode=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
           if [ -n "$xcode" ]; then sudo xcode-select -s "$xcode"; fi
-          swift --version
-      - run: swift build
-      - run: swift test
-        env:
-          # Hosted runners have no on-device speech models, so the tests that talk to the
-          # Speech framework are skipped here — declared, not automatic. Locally they
-          # always run, and they are the ones that prove transcription really works.
-          AMBAR_SKIP_SPEECH_TESTS: '1'
-      - run: ./Scripts/check-localization.sh
+      - run: ./Scripts/ci.sh

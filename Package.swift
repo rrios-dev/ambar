@@ -22,6 +22,12 @@ let package = Package(
         .library(name: "GlassUI", targets: ["GlassUI"]),
         .library(name: "AppCore", targets: ["AppCore"]),
         .library(name: "VoiceKit", targets: ["VoiceKit"]),
+        .executable(name: "ambar-mcp", targets: ["AmbarMCP"]),
+    ],
+    dependencies: [
+        // The MCP server agents launch (docs/initiatives/mac-apps-mcp/DESIGN.md): the owner's
+        // own package, MIT, Foundation only — shared with other Mac apps.
+        .package(url: "https://github.com/rrios-dev/mcpkit.git", from: "0.2.0"),
     ],
     targets: [
         // Almacén de binarios direccionado por contenido (SHA-256) + thumbnails.
@@ -68,10 +74,31 @@ let package = Package(
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
 
+        // What agents (Claude Code, Codex…) can do with Ámbar over MCP: the tools, the access
+        // switch and log, and the request the MCP server hands to the running app
+        // (docs/initiatives/mac-apps-mcp/DESIGN.md). No AppKit beyond the pasteboard.
+        .target(
+            name: "AmbarAgent",
+            dependencies: ["ClipboardKit", "BlobStore", .product(name: "MCPKit", package: "mcpkit")],
+            path: "packages/AmbarAgent",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+
+        // ambar-mcp: the MCP server inside Ámbar.app, launched by the agent over stdio.
+        .executableTarget(
+            name: "AmbarMCP",
+            dependencies: ["AmbarAgent", .product(name: "MCPKit", package: "mcpkit")],
+            path: "apps/AmbarMCP",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+
         // La app. Delgada: wiring + UI propia.
         .executableTarget(
             name: "Ambar",
-            dependencies: ["BlobStore", "ClipboardKit", "GlassUI", "AppCore", "VoiceKit"],
+            dependencies: [
+                "BlobStore", "ClipboardKit", "GlassUI", "AppCore", "VoiceKit", "AmbarAgent",
+                .product(name: "MCPKit", package: "mcpkit"),
+            ],
             path: "apps/Ambar",
             // El icono lo coloca el script de empaquetado directamente en
             // Contents/Resources; incluirlo además como recurso del target
@@ -96,6 +123,12 @@ let package = Package(
             name: "ClipboardKitTests",
             dependencies: ["ClipboardKit", "BlobStore"],
             path: "Tests/ClipboardKitTests",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .testTarget(
+            name: "AmbarAgentTests",
+            dependencies: ["AmbarAgent", "ClipboardKit", "BlobStore", .product(name: "MCPKit", package: "mcpkit")],
+            path: "Tests/AmbarAgentTests",
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .testTarget(

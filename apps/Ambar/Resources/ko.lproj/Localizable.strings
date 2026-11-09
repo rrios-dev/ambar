@@ -231,3 +231,21 @@
 /* 권한 허용 후 다시 실행 */
 "permission.restart_needed" = "Ámbar가 실행 중일 때 권한을 허용했습니다. 자동 붙여넣기가 작동하려면 앱을 다시 실행하십시오.";
 "permission.restart" = "다시 실행";
+
+/* Settings › Agents (docs/initiatives/mac-apps-mcp/DESIGN.md) */
+"agents.section" = "에이전트";
+"agents.toggle" = "Claude Code, Codex 등 에이전트가 Ámbar를 사용하도록 허용";
+"agents.help" = "기록을 검색하고 복사한 내용(이미지와 이미지 속 텍스트 포함)을 읽고, 사전을 보고 단어를 추가하고, 클립보드에 텍스트를 복사할 수 있습니다. 아무것도 삭제하지 않습니다. 암호 관리자가 복사한 내용은 저장되지 않습니다.";
+"agents.privacy" = "에이전트가 읽은 내용은 Mac을 떠나 해당 에이전트의 모델(Anthropic, OpenAI 등)로 전송됩니다. 이것은 허가일 뿐 잠금이 아닙니다. 사용자 계정으로 실행되는 프로그램은 이 파일을 읽을 수 있습니다.";
+"agents.connect" = "연결";
+"agents.disconnect" = "연결 해제";
+"agents.connect.help" = "각 에이전트의 명령을 사용합니다. 직접 하려면 터미널에서:";
+"agents.connected %@" = "%@에 연결했습니다. Ámbar의 도구가 보이도록 다시 시작하세요.";
+"agents.disconnected %@" = "%@와의 연결을 해제했습니다.";
+"agents.notInstalled %@" = "%@가 설치되어 있지 않거나 PATH에 없습니다.";
+"agents.failed %@" = "실패했습니다: %@";
+"agents.log" = "최근 접근";
+"agents.log.empty" = "아직 Ámbar를 사용한 에이전트가 없습니다.";
+"agents.log.refused" = "거부됨";
+"agents.log.clear" = "기록 지우기";
+"agents.client.unknown" = "에이전트";

@@ -231,3 +231,21 @@
 /* 授予权限后的重启 */
 "permission.restart_needed" = "你是在 Ámbar 运行时授予权限的。请重新启动 App，自动粘贴才会生效。";
 "permission.restart" = "重新启动";
+
+/* Settings › Agents (docs/initiatives/mac-apps-mcp/DESIGN.md) */
+"agents.section" = "智能体";
+"agents.toggle" = "允许 Claude Code、Codex 等智能体使用 Ámbar";
+"agents.help" = "它们可以搜索你的历史记录、读取你复制的内容（包括图片及其中的文字）、查看你的词典、向其中添加词语，以及把文字复制到剪贴板。它们从不删除任何内容。密码管理器复制的内容从不保存。";
+"agents.privacy" = "智能体读取的内容会离开你的 Mac，发送给该智能体的模型（Anthropic、OpenAI 等）。这是一项许可，而不是一把锁：以你的用户身份运行的任何程序都能读取这些文件。";
+"agents.connect" = "连接";
+"agents.disconnect" = "断开";
+"agents.connect.help" = "使用各智能体自己的命令。如果想自己操作，在“终端”中：";
+"agents.connected %@" = "已连接到 %@。请重新启动它，让它看到 Ámbar 的工具。";
+"agents.disconnected %@" = "已与 %@ 断开。";
+"agents.notInstalled %@" = "%@ 未安装，或不在你的 PATH 中。";
+"agents.failed %@" = "未能完成：%@";
+"agents.log" = "最近访问";
+"agents.log.empty" = "还没有智能体使用过 Ámbar。";
+"agents.log.refused" = "已拒绝";
+"agents.log.clear" = "清除记录";
+"agents.client.unknown" = "某个智能体";

@@ -74,6 +74,27 @@ public struct KeyCombination: Sendable, Equatable, Codable {
     }
 }
 
+/// Options of `RegisterEventHotKey`.
+public struct HotKeyOptions: OptionSet, Sendable {
+    public let rawValue: UInt32
+
+    public init(rawValue: UInt32) { self.rawValue = rawValue }
+
+    /// `kEventHotKeyExclusive`: fail when another app holds the combination
+    /// exclusively, and take it over from apps that registered it normally.
+    public static let exclusive = HotKeyOptions(rawValue: UInt32(kEventHotKeyExclusive))
+}
+
+/// Why `RegisterEventHotKey` refused a combination.
+public struct HotKeyRegistrationError: Error, Equatable, Sendable {
+    public let status: OSStatus
+
+    public init(status: OSStatus) { self.status = status }
+
+    /// Another app holds the combination exclusively (`eventHotKeyExistsErr`).
+    public var isInUseByAnotherApp: Bool { status == OSStatus(eventHotKeyExistsErr) }
+}
+
 /// Registro de atajos globales mediante Carbon.
 ///
 /// `RegisterEventHotKey` es API vieja pero es la correcta aquí: a diferencia de
@@ -110,6 +131,23 @@ public final class HotKeyCenter {
         action: @escaping () -> Void,
         onRelease: (() -> Void)? = nil
     ) -> UInt32? {
+        try? register(combination, options: [], action: action, onRelease: onRelease).get()
+    }
+
+    /// Registers the combination with Carbon options, reporting why a registration
+    /// failed instead of dropping the status.
+    ///
+    /// With `.exclusive`, a combination another app holds exclusively fails with
+    /// `eventHotKeyExistsErr`, and one other apps registered normally is taken over
+    /// from them (they stop receiving it) without any error. A caller that needs the
+    /// combination to work must not fall back to a shared registration after such a
+    /// failure: under an exclusive owner it returns no error but never fires.
+    public func register(
+        _ combination: KeyCombination,
+        options: HotKeyOptions,
+        action: @escaping () -> Void,
+        onRelease: (() -> Void)? = nil
+    ) -> Result<UInt32, HotKeyRegistrationError> {
         installHandlerIfNeeded()
 
         let identifier = nextID
@@ -123,14 +161,14 @@ public final class HotKeyCenter {
             combination.modifiers,
             hotKeyID,
             GetEventDispatcherTarget(),
-            0,
+            options.rawValue,
             &reference
         )
 
-        guard status == noErr else { return nil }
+        guard status == noErr else { return .failure(HotKeyRegistrationError(status: status)) }
 
         registrations[identifier] = (reference, action, onRelease)
-        return identifier
+        return .success(identifier)
     }
 
     public func unregister(_ identifier: UInt32) {

@@ -42,3 +42,7 @@ pt-BR	settings.dictation.mode
 pt-BR	onboarding.continue
 pt-BR	onboarding.progress
 pt-BR	permission.restart
+it	agents.client.unknown
+pt-BR	agents.connect
+pt-BR	agents.disconnect
+pt-BR	agents.section

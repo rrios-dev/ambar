@@ -49,8 +49,7 @@ final class OnboardingController: NSObject, NSWindowDelegate {
     ///   concedido —lo que dejaría el gate midiendo un plan distinto en cada Mac—.
     func present(conditions fixed: OnboardingConditions? = nil) {
         if let window {
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate()
+            WindowFocus.bringForward(window)
             return
         }
 
@@ -105,11 +104,9 @@ final class OnboardingController: NSObject, NSWindowDelegate {
         window.delegate = self
         self.window = window
 
-        window.makeKeyAndOrderFront(nil)
-        // Una app sin icono en el Dock no recibe la activación por el hecho de mostrar una
-        // ventana, y sin ella la ventana sale detrás de lo que el usuario tenga delante:
-        // una presentación que nadie ve.
-        NSApp.activate()
+        // An app without a Dock icon is not activated by showing a window, and without the
+        // activation the window opens behind whatever the user has in front.
+        WindowFocus.bringForward(window)
     }
 
     /// Terminó: se anota la versión vista y se cierra.

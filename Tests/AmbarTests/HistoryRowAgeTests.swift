@@ -5,6 +5,7 @@ import Testing
 
 /// The age shown under each history entry.
 @Suite("History row age")
+@MainActor  // `HistoryRow` is a SwiftUI view, so its static helpers are main-actor isolated.
 struct HistoryRowAgeTests {
     private let now = Date(timeIntervalSinceReferenceDate: 800_000_000)
     private let spanish = Locale(identifier: "es_ES")

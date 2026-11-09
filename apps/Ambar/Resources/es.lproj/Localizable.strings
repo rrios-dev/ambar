@@ -235,3 +235,21 @@
 /* Reinicio tras conceder el permiso */
 "permission.restart_needed" = "Has concedido el permiso con Ámbar abierto. Reinicia la app para que el pegado automático funcione.";
 "permission.restart" = "Reiniciar";
+
+/* Settings › Agents (docs/initiatives/mac-apps-mcp/DESIGN.md) */
+"agents.section" = "Agentes";
+"agents.toggle" = "Permitir que Claude Code, Codex y otros agentes usen Ámbar";
+"agents.help" = "Podrán buscar en tu historial y leer lo que copiaste (también las imágenes y su texto), ver tu diccionario, añadirle palabras y copiar texto al portapapeles. Nunca borran nada. Lo que copian los gestores de contraseñas no se guarda.";
+"agents.privacy" = "Lo que lea el agente sale de tu Mac hacia el modelo de ese agente (Anthropic, OpenAI…). Es un permiso, no un candado: cualquier programa de tu usuario puede leer estos archivos.";
+"agents.connect" = "Conectar";
+"agents.disconnect" = "Desconectar";
+"agents.connect.help" = "Usa el comando de cada agente. Si prefieres hacerlo tú, en Terminal:";
+"agents.connected %@" = "Conectado a %@. Reinícialo para que vea las herramientas de Ámbar.";
+"agents.disconnected %@" = "Desconectado de %@.";
+"agents.notInstalled %@" = "%@ no está instalado, o no está en tu PATH.";
+"agents.failed %@" = "No se pudo: %@";
+"agents.log" = "Últimos accesos";
+"agents.log.empty" = "Ningún agente ha usado Ámbar todavía.";
+"agents.log.refused" = "Rechazado";
+"agents.log.clear" = "Borrar registro";
+"agents.client.unknown" = "Un agente";

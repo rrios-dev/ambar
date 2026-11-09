@@ -20,8 +20,17 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# In the monorepo the documents live next to `native/`; in the public repository, inside it.
-if [ -d "$ROOT/docs" ]; then DOCS="$ROOT/docs"; else DOCS="$ROOT/../docs"; fi
+# The live documents: in the public repository `docs/ambar-*.md`; in the monorepo the same
+# two, `docs/initiatives/ambar/{dictado,icono}.md`, which export-public.sh publishes under
+# those names. The monorepo moved them there and this check kept looking in `docs/`, found
+# nothing and failed on its floor, so Ámbar's release preflight could not pass.
+if [ -d "$ROOT/docs" ]; then
+  DOCS="$ROOT/docs"
+  live_docs() { find "$DOCS" -maxdepth 1 -name "ambar*.md"; }
+else
+  DOCS="$ROOT/../docs/initiatives/ambar"
+  live_docs() { find "$DOCS" -maxdepth 1 \( -name dictado.md -o -name icono.md \); }
+fi
 
 checked=0
 skipped=0
@@ -80,7 +89,7 @@ while IFS= read -r doc; do
 # que apunte al código de hoy lo obligaría a mentir sobre el de entonces.
 #
 # Lo que sí se arregló es el otro medio hallazgo: la comparación era por subcadena.
-done < <(find "$DOCS" -maxdepth 1 -name "ambar*.md")
+done < <(live_docs)
 
 echo "Citas comprobadas: $checked · sin fichero propio (API del sistema): $skipped · rotas: $failures"
 

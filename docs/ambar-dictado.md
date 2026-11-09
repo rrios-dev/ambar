@@ -4,7 +4,7 @@ Diseño de la transcripción de voz como segunda puerta de entrada al conducto d
 Ámbar. Qué se decidió, por qué, y las tensiones que quedan por medir.
 
 > **Revisión 2 (2026-08-12)** — incorpora la auditoría
-> [`audit/ambar-dictado-2026-08-12.md`](audit/ambar-dictado-2026-08-12.md): 3
+> [`audit/ambar-dictado-2026-08-12.md`](../../audit/ambar-dictado-2026-08-12.md): 3
 > bloqueantes, 8 graves y 8 menores. Donde el informe contradecía a la revisión 1,
 > manda el informe. Los cambios de fondo son tres: el módulo del framework era el
 > equivocado (§2), el permiso del micrófono no puede pedirse desde el gesto (§4.1),
@@ -742,13 +742,13 @@ Tres, y las tres se resuelven midiendo:
 
 ## 16. Referencias
 
-- [`audit/ambar-dictado-2026-08-12.md`](audit/ambar-dictado-2026-08-12.md) — la
+- [`audit/ambar-dictado-2026-08-12.md`](../../audit/ambar-dictado-2026-08-12.md) — la
   auditoría que produjo esta revisión.
 - [`architecture/native-platform.md`](architecture/native-platform.md) — el grafo
   nativo del monorepo.
-- [`audit/ambar-2026-08-09.md`](audit/ambar-2026-08-09.md) — contraste, permisos de
+- [`audit/ambar-2026-08-09.md`](../../audit/ambar-2026-08-09.md) — contraste, permisos de
   disco, firma.
-- [`ambar-lanzamiento.md`](ambar-lanzamiento.md) — firma y notarización.
+- [`ambar-lanzamiento.md`](lanzamiento.md) — firma y notarización.
 - `native/packages/ClipboardKit/TextRecognizer.swift` — «preguntar al sistema en
   vez de asumir».
 - `native/packages/AppCore/HotKey.swift` — por qué Carbon y no un event tap.

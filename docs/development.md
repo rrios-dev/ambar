@@ -318,5 +318,5 @@ está automatizado es que los controles de la presentación tengan nombre para V
 sobre la app viva, en `./Scripts/check-accessibility.sh`.
 
 Lo que falta para publicar está en
-[`docs/ambar-lanzamiento.md`](../docs/ambar-lanzamiento.md), y se reduce a la
+[`docs/initiatives/ambar/lanzamiento.md`](../docs/initiatives/ambar/lanzamiento.md), y se reduce a la
 cuenta del Apple Developer Program.

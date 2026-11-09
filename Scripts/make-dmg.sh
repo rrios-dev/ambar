@@ -5,7 +5,7 @@
 # POR QUÉ EXISTE
 #
 # La cadena de publicación producía un `.app` firmado y notarizado, y ahí se detenía: el
-# empaquetado vivía como cuatro líneas de prosa en `docs/ambar-lanzamiento.md` que nadie
+# empaquetado vivía como cuatro líneas de prosa en `docs/initiatives/ambar/lanzamiento.md` que nadie
 # había ejecutado. Es el mismo defecto que `release.sh` vino a arreglar para la firma —un
 # procedimiento que nadie ha corrido es una intención, no un procedimiento—, y quedaba justo
 # el último tramo: lo que el usuario descarga y abre.
@@ -197,6 +197,13 @@ ok "imagen comprimida: $(du -h "$DMG" | cut -f1)"
 # la app de dentro esté notarizada, y el usuario ve el aviso antes de llegar a la app.
 
 IDENTITY="${CODESIGN_IDENTITY:-${DEVELOPER_ID:-}}"
+# By SHA-1 when given a name: on macOS 27 a name with a non-ASCII letter ("Ríos") reaches
+# codesign mis-encoded and it finds no identity.
+if [ -n "$IDENTITY" ] && ! [[ "$IDENTITY" =~ ^[0-9A-F]{40}$ ]]; then
+  KEYCHAIN_IDENTITIES="$(security find-identity -p codesigning 2>/dev/null || true)"
+  HASH="$(awk -v name="\"$IDENTITY\"" 'index($0, name) { print $2; exit }' <<<"$KEYCHAIN_IDENTITIES")"
+  [ -n "$HASH" ] && IDENTITY="$HASH"
+fi
 if [ -n "$IDENTITY" ]; then
   # `--timestamp` porque la notarización exige sello seguro. Con identidad ad-hoc esto
   # fallaría, y por eso solo se firma cuando hay una identidad de verdad declarada.

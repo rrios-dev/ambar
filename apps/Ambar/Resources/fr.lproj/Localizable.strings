@@ -231,3 +231,21 @@
 /* Redémarrage après l’autorisation */
 "permission.restart_needed" = "Vous avez accordé l’autorisation avec Ámbar ouvert. Redémarrez l’app pour que le collage automatique fonctionne.";
 "permission.restart" = "Redémarrer";
+
+/* Settings › Agents (docs/initiatives/mac-apps-mcp/DESIGN.md) */
+"agents.section" = "Agents";
+"agents.toggle" = "Autoriser Claude Code, Codex et d’autres agents à utiliser Ámbar";
+"agents.help" = "Ils pourront chercher dans ton historique et lire ce que tu as copié (y compris les images et leur texte), voir ton dictionnaire, y ajouter des mots et copier du texte dans le presse-papiers. Ils ne suppriment jamais rien. Ce que copient les gestionnaires de mots de passe n’est jamais conservé.";
+"agents.privacy" = "Ce que lit l’agent quitte ton Mac vers le modèle de cet agent (Anthropic, OpenAI…). C’est une permission, pas un verrou : tout programme de ton utilisateur peut lire ces fichiers.";
+"agents.connect" = "Connecter";
+"agents.disconnect" = "Déconnecter";
+"agents.connect.help" = "Utilise la commande de chaque agent. Si tu préfères le faire toi-même, dans le Terminal :";
+"agents.connected %@" = "Connecté à %@. Redémarre-le pour qu’il voie les outils d’Ámbar.";
+"agents.disconnected %@" = "Déconnecté de %@.";
+"agents.notInstalled %@" = "%@ n’est pas installé, ou n’est pas dans ton PATH.";
+"agents.failed %@" = "Ça n’a pas marché : %@";
+"agents.log" = "Derniers accès";
+"agents.log.empty" = "Aucun agent n’a encore utilisé Ámbar.";
+"agents.log.refused" = "Refusé";
+"agents.log.clear" = "Effacer le journal";
+"agents.client.unknown" = "Un agent";

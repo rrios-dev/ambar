@@ -18,12 +18,16 @@ APP="$ROOT/.build/Ambar.app"
 echo "▸ Compilando ($CONFIGURATION)…"
 cd "$ROOT"
 swift build -c "$CONFIGURATION" --product Ambar
+# The MCP server agents launch (docs/initiatives/mac-apps-mcp/DESIGN.md), shipped next to
+# the app so it always reads the database format of the app beside it.
+swift build -c "$CONFIGURATION" --product ambar-mcp
 
 echo "▸ Montando el bundle…"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
 cp "$BUILD_DIR/Ambar" "$APP/Contents/MacOS/Ambar"
+cp "$BUILD_DIR/ambar-mcp" "$APP/Contents/MacOS/ambar-mcp"
 cp "$ROOT/apps/Ambar/Info.plist" "$APP/Contents/Info.plist"
 
 # Los bundles de recursos van a Contents/Resources, que es el único sitio válido:
@@ -116,14 +120,22 @@ fi
 
 IDENTITY="${CODESIGN_IDENTITY:--}"
 echo "▸ Firmando con identidad: $IDENTITY"
+# codesign gets the identity by its SHA-1, not its name: on macOS 27 a name with a
+# non-ASCII letter ("Ríos") reaches it mis-encoded ("R√≠os") and it answers "no identity
+# found". The name stays in the message above, for people.
+SIGN_IDENTITY="$IDENTITY"
+if [ "$IDENTITY" != "-" ]; then
+  HASH="$(awk -v name="\"$IDENTITY\"" 'index($0, name) { print $2; exit }' <<<"$IDENTITIES")"
+  [ -n "$HASH" ] && SIGN_IDENTITY="$HASH"
+fi
 
 # --options runtime: Hardened Runtime. La notarización lo exige, y sin él el
 #   envío a notarytool se rechaza. Ver docs/audit/ambar-2026-08-09.md (B1).
 # --entitlements: una sola entrada, la de entrada de audio que el dictado necesita.
 # El fichero explica por qué no hay ninguna más y por qué no hay App Sandbox.
 # NO se usa --deep: Apple lo desaconseja explícitamente y no sustituye a firmar
-#   cada componente. Hoy el bundle no tiene componentes anidados; el día que
-#   los tenga (Sparkle, por ejemplo), habrá que firmarlos de dentro afuera.
+#   cada componente. The one nested executable, ambar-mcp, is signed on its own
+#   first, inside out, without the app's entitlements: it records no audio.
 SIGN_ARGS=(--force --options runtime --entitlements "$ROOT/apps/Ambar/Ambar.entitlements")
 
 # --timestamp necesita un certificado real y conexión con el servidor de sellado
@@ -135,7 +147,10 @@ else
   SIGN_ARGS+=(--timestamp=none)
 fi
 
-codesign "${SIGN_ARGS[@]}" --sign "$IDENTITY" "$APP"
+HELPER_ARGS=(--force --options runtime)
+if [ "$IDENTITY" != "-" ]; then HELPER_ARGS+=(--timestamp); else HELPER_ARGS+=(--timestamp=none); fi
+codesign "${HELPER_ARGS[@]}" --sign "$SIGN_IDENTITY" "$APP/Contents/MacOS/ambar-mcp"
+codesign "${SIGN_ARGS[@]}" --sign "$SIGN_IDENTITY" "$APP"
 
 # Comprobación, no confianza: que el flag esté puesto de verdad en el binario.
 #

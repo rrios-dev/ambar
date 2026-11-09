@@ -15,12 +15,14 @@ hueco pasa de invisible a revisado: una cadena nueva que coincida falla hasta qu
 decida que es un cognado y lo escriba.
 """
 
+import os
 import pathlib
 import re
 import sys
 
 LINE = re.compile(r'\s*"((?:[^"\\]|\\.)+)"\s*=\s*"((?:[^"\\]|\\.)*)"\s*;')
-ALLOWLIST = pathlib.Path(__file__).with_name("untranslated-allowed.txt")
+# LOCALIZATION_ALLOWLIST points another app at its own reviewed list.
+ALLOWLIST = pathlib.Path(os.environ.get("LOCALIZATION_ALLOWLIST") or pathlib.Path(__file__).with_name("untranslated-allowed.txt"))
 
 
 def allowed(language: str) -> set[str]:

@@ -231,3 +231,21 @@
 /* Neustart nach der Berechtigung */
 "permission.restart_needed" = "Du hast die Berechtigung bei laufendem Ámbar erteilt. Starte die App neu, damit das automatische Einsetzen funktioniert.";
 "permission.restart" = "Neu starten";
+
+/* Settings › Agents (docs/initiatives/mac-apps-mcp/DESIGN.md) */
+"agents.section" = "Agenten";
+"agents.toggle" = "Claude Code, Codex und anderen Agenten erlauben, Ámbar zu nutzen";
+"agents.help" = "Sie können deinen Verlauf durchsuchen und lesen, was du kopiert hast (auch Bilder und ihren Text), dein Wörterbuch ansehen, Wörter hinzufügen und Text in die Zwischenablage kopieren. Sie löschen nie etwas. Was Passwortmanager kopieren, wird nie gespeichert.";
+"agents.privacy" = "Was der Agent liest, verlässt deinen Mac in Richtung des Modells dieses Agenten (Anthropic, OpenAI …). Das ist eine Erlaubnis, kein Schloss: Jedes Programm deines Benutzers kann diese Dateien lesen.";
+"agents.connect" = "Verbinden";
+"agents.disconnect" = "Trennen";
+"agents.connect.help" = "Nutzt den Befehl des jeweiligen Agenten. Wenn du es selbst machen willst, im Terminal:";
+"agents.connected %@" = "Mit %@ verbunden. Starte es neu, damit es die Werkzeuge von Ámbar sieht.";
+"agents.disconnected %@" = "Von %@ getrennt.";
+"agents.notInstalled %@" = "%@ ist nicht installiert oder nicht in deinem PATH.";
+"agents.failed %@" = "Das hat nicht geklappt: %@";
+"agents.log" = "Letzte Zugriffe";
+"agents.log.empty" = "Noch kein Agent hat Ámbar benutzt.";
+"agents.log.refused" = "Abgelehnt";
+"agents.log.clear" = "Protokoll löschen";
+"agents.client.unknown" = "Ein Agent";

@@ -233,3 +233,21 @@
 /* Restart after granting the permission */
 "permission.restart_needed" = "You granted the permission while Ámbar was running. Restart the app so automatic pasting works.";
 "permission.restart" = "Restart";
+
+/* Settings › Agents (docs/initiatives/mac-apps-mcp/DESIGN.md) */
+"agents.section" = "Agents";
+"agents.toggle" = "Let Claude Code, Codex and other agents use Ámbar";
+"agents.help" = "They can search your history and read what you copied (images and their text too), see your dictionary, add words to it and copy text to the clipboard. They never delete anything. What password managers copy is never kept.";
+"agents.privacy" = "What the agent reads leaves your Mac for that agent's model (Anthropic, OpenAI…). This is a permission, not a lock: any program running as you can read these files.";
+"agents.connect" = "Connect";
+"agents.disconnect" = "Disconnect";
+"agents.connect.help" = "Uses each agent's own command. To do it yourself, in Terminal:";
+"agents.connected %@" = "Connected to %@. Restart it so it sees Ámbar's tools.";
+"agents.disconnected %@" = "Disconnected from %@.";
+"agents.notInstalled %@" = "%@ isn't installed, or isn't on your PATH.";
+"agents.failed %@" = "It didn't work: %@";
+"agents.log" = "Recent access";
+"agents.log.empty" = "No agent has used Ámbar yet.";
+"agents.log.refused" = "Refused";
+"agents.log.clear" = "Clear log";
+"agents.client.unknown" = "An agent";
