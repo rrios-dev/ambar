@@ -169,6 +169,22 @@ struct StoreTests {
         #expect(results.first?.sourceName == "Safari")
     }
 
+    @Test("copying the same content from another source re-indexes the new source name")
+    func repeatedCopyReindexesSourceName() throws {
+        // A repeat moves the existing entry up and takes the new source; free-text search
+        // must find it by that new source and no longer by the old one, or the list shows
+        // one name and the search answers for another.
+        let store = try Store(directory: makeTemporaryDirectory())
+        let first = try store.insert(makeItem(text: "shared snippet", source: "Terminal"))
+        let second = try store.insert(makeItem(text: "shared snippet", source: "Linux · Firefox"))
+        #expect(first == second)
+
+        let byNew = try store.items(matching: SearchQuery.parse("linux"))
+        #expect(byNew.map(\.id) == [first])
+        #expect(try store.items(matching: SearchQuery.parse("terminal")).isEmpty)
+        #expect(try store.items(matching: SearchQuery.parse("snippet")).map(\.id) == [first])
+    }
+
     @Test("Un texto enorme no rompe la inserción ni el índice")
     func hugeTextIsClamped() throws {
         let store = try Store(directory: makeTemporaryDirectory())

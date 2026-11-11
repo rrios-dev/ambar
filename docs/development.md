@@ -215,7 +215,7 @@ native/
 │   ├── BlobStore/                   binarios por contenido (SHA-256) + miniaturas
 │   ├── ClipboardKit/                captura, modelo, SQLite/FTS5, OCR
 │   ├── GlassUI/                     primitivos Liquid Glass y medidas
-│   ├── VoiceKit/                    dictado: motor Speech, audio, capacidad
+│   ├── VoiceKit/                    dictado: motor Speech, audio, capacidad, diccionario compartido con Quill
 │   └── AppCore/                     atajos, pegado, arranque al inicio, ubicación
 ├── apps/Ambar/                      wiring y UI
 │   ├── Onboarding.swift             qué pasos se muestran y por dónde va

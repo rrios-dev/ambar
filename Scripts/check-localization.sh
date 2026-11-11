@@ -26,8 +26,11 @@ STATUS=0
 #                                  more languages than the app announces, never fewer
 #   LOCALIZATION_CATALOGS          reference catalogs for unknown keys, ':'-separated
 #   LOCALIZATION_BASE              the reference language (es)
-#   LOCALIZATION_MIN_CALLS, LOCALIZATION_EXTRA_USE, LOCALIZATION_ALLOWLIST: see the
-#                                  Python helpers.
+#   LOCALIZATION_REQUIRE_PLURALS   yes (default): the app must ship a Localizable.stringsdict.
+#                                  no: an app with no plural string yet is let through; any
+#                                  stringsdict it does ship is still checked in full.
+#   LOCALIZATION_MIN_CALLS, LOCALIZATION_MIN_KEYS, LOCALIZATION_EXTRA_USE,
+#   LOCALIZATION_ALLOWLIST: see the Python helpers.
 SCAN_ROOT="${LOCALIZATION_SCAN_ROOT:-$ROOT}"
 APP_RESOURCES="${LOCALIZATION_APP_RESOURCES:-$ROOT/apps/Ambar/Resources}"
 APP_PLIST="${LOCALIZATION_APP_PLIST:-$ROOT/apps/Ambar/Info.plist}"
@@ -38,6 +41,7 @@ CATALOGS="${LOCALIZATION_CATALOGS:-$ROOT/apps/Ambar/Resources/es.lproj/Localizab
 BASE="${LOCALIZATION_BASE:-es}"
 MIN_CALLS="${LOCALIZATION_MIN_CALLS:-50}"
 export LOCALIZATION_MIN_CALLS="$MIN_CALLS"
+REQUIRE_PLURALS="${LOCALIZATION_REQUIRE_PLURALS:-yes}"
 
 # `String(localized:)` sin `bundle:` se resuelve contra Bundle.main, donde NO están
 # las cadenas: SwiftPM las empaqueta en Ambar_Ambar.bundle. El síntoma es que la
@@ -406,11 +410,11 @@ PYEOF
 # con el CI en verde. Al revés también cuenta: una categoría que el idioma no usa es texto
 # muerto que alguien mantiene creyendo que se lee.
 check_plural_categories() {
-  local resources="$1" name="$2"
-  python3 - "$resources" "$name" <<'PYEOF' || STATUS=1
+  local resources="$1" name="$2" require="${3:-no}"
+  python3 - "$resources" "$name" "$require" <<'PYEOF' || STATUS=1
 import json, subprocess, sys, pathlib
 
-resources, name = sys.argv[1], sys.argv[2]
+resources, name, require = sys.argv[1], sys.argv[2], sys.argv[3] == "yes"
 # Mínimo exigible por idioma. Deliberadamente el conjunto clásico: CLDR 42 añadió «many» a
 # es/fr/pt para los millones, y exigirlo marcaría en rojo diez ficheros correctos por un
 # caso que esta app no tiene. Lo que sí se exige es que no falte una forma de uso diario.
@@ -465,7 +469,7 @@ if not files:
     # verde, porque además la paridad de claves sobrevive cuando TODOS los idiomas
     # pierden lo mismo. Para la app se exige que existan; para los paquetes sin plurales
     # se admite, y se dice cuál es cuál.
-    if name == "app":
+    if require:
         print(f"  ✗ {name}: no hay ni un Localizable.stringsdict — los plurales saldrían en la forma incorrecta")
         sys.exit(1)
     print(f"▸ {name} — sin plurales que comprobar")
@@ -533,7 +537,7 @@ check_values "$APP_RESOURCES" "app" "$BASE"
 for entry in "${package_entries[@]}"; do check_values "${entry%%=*}" "${entry#*=}" "$BASE"; done
 check_format_specifiers "$APP_RESOURCES" "app" "$BASE"
 for entry in "${package_entries[@]}"; do check_format_specifiers "${entry%%=*}" "${entry#*=}" "$BASE"; done
-check_plural_categories "$APP_RESOURCES" "app"
+check_plural_categories "$APP_RESOURCES" "app" "$REQUIRE_PLURALS"
 for entry in "${package_entries[@]}"; do check_plural_categories "${entry%%=*}" "${entry#*=}"; done
 check_infoplist_parity "$INFOPLIST_RESOURCES" "app" "$BASE"
 

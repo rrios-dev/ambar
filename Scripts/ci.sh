@@ -47,5 +47,9 @@ swift test
 step "localization parity"
 ./Scripts/check-localization.sh
 
+# The release chain's own tests, on a throwaway bundle signed ad hoc: no identity needed.
+step "release chain"
+./Scripts/release-chain.test.sh
+
 echo
 echo "✓ ci.sh: all checks passed"

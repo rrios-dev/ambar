@@ -127,15 +127,23 @@ public final class Store: @unchecked Sendable {
     public func insert(_ captured: CapturedItem, now: Date = Date()) throws -> Int64 {
         try locked {
             if let existing = try findByFingerprint(captured.fingerprint) {
-                try database.run(
-                    "UPDATE item SET created_at = ?, source_bundle = ?, source_name = ? WHERE id = ?;",
-                    [
-                        .real(now.timeIntervalSince1970),
-                        .optionalText(captured.sourceBundle),
-                        .optionalText(captured.sourceName),
-                        .integer(existing),
-                    ]
-                )
+                try database.transaction {
+                    try database.run(
+                        "UPDATE item SET created_at = ?, source_bundle = ?, source_name = ? WHERE id = ?;",
+                        [
+                            .real(now.timeIntervalSince1970),
+                            .optionalText(captured.sourceBundle),
+                            .optionalText(captured.sourceName),
+                            .integer(existing),
+                        ]
+                    )
+                    // The index carries the source name too: without this, free-text search
+                    // kept answering for the first source while the list showed the new one.
+                    try database.run(
+                        "UPDATE item_fts SET source_name = ? WHERE rowid = ?;",
+                        [.optionalText(captured.sourceName), .integer(existing)]
+                    )
+                }
                 return existing
             }
 

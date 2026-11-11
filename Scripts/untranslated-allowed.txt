@@ -46,3 +46,9 @@ it	agents.client.unknown
 pt-BR	agents.connect
 pt-BR	agents.disconnect
 pt-BR	agents.section
+#
+# 2026-11-04 — the bug report form (AppCore, shared-control J-28): «Cancelar», «Enviar» and
+# «Enviando…» are written the same in Spanish and in Portuguese.
+pt-BR	bugreport.cancel
+pt-BR	bugreport.send
+pt-BR	bugreport.sending

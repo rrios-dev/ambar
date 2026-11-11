@@ -20,6 +20,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         model.start()
 
+        // The user's terminal PATH: Settings → Agents registers the app with `claude` or
+        // `codex`, which an app opened from the Finder would not find (AppCore).
+        Task { await LoginShellPath.importIntoProcess() }
+
         // La preferencia de arranque, contra el registro real del sistema. Aquí y no en
         // el `didSet`: ese solo corre al cambiarla, y el registro se pierde al reinstalar
         // o mover la app — dejando la casilla marcada y Ámbar sin arrancar sola.

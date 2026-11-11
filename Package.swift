@@ -22,6 +22,7 @@ let package = Package(
         .library(name: "GlassUI", targets: ["GlassUI"]),
         .library(name: "AppCore", targets: ["AppCore"]),
         .library(name: "VoiceKit", targets: ["VoiceKit"]),
+        .library(name: "AgentHost", targets: ["AgentHost"]),
         .executable(name: "ambar-mcp", targets: ["AmbarMCP"]),
     ],
     dependencies: [
@@ -84,6 +85,18 @@ let package = Package(
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
 
+        // An app's side of agent access, generic over its request and reply: the switch, the
+        // access log, the socket its MCP executable talks to, registering that executable
+        // with Claude Code and Codex. The shape Ámbar's and Quill's AgentService share, built
+        // once (C-27); Batuta is its first consumer. Foundation, Observation and MCPKit only,
+        // and no localized strings: outcomes are enums each app words itself.
+        .target(
+            name: "AgentHost",
+            dependencies: [.product(name: "MCPKit", package: "mcpkit")],
+            path: "packages/AgentHost",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+
         // ambar-mcp: the MCP server inside Ámbar.app, launched by the agent over stdio.
         .executableTarget(
             name: "AmbarMCP",
@@ -129,6 +142,12 @@ let package = Package(
             name: "AmbarAgentTests",
             dependencies: ["AmbarAgent", "ClipboardKit", "BlobStore", .product(name: "MCPKit", package: "mcpkit")],
             path: "Tests/AmbarAgentTests",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .testTarget(
+            name: "AgentHostTests",
+            dependencies: ["AgentHost", .product(name: "MCPKit", package: "mcpkit")],
+            path: "Tests/AgentHostTests",
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .testTarget(

@@ -1,5 +1,6 @@
 import GlassUI
 import SwiftUI
+import VoiceKit
 
 /// Settings section for the personal dictation vocabulary.
 ///

@@ -64,6 +64,30 @@ struct UpdateCheckTests {
         #expect(await check.checkIfDue(now: now.addingTimeInterval(60 * 3600)) == nil)
     }
 
+    @Test("a newer version is brought up once, also across launches; a later one is brought up again")
+    func notice() async {
+        let defaults = Self.defaults()
+        let check = UpdateCheck(repository: "o/r", currentVersion: "1.2.0", defaults: defaults) { _ in Self.release("v1.3.0") }
+        #expect(check.takeNotice() == nil)
+        await check.checkNow()
+        #expect(check.takeNotice()?.version == "1.3.0")
+        #expect(check.takeNotice() == nil)
+        let relaunched = UpdateCheck(repository: "o/r", currentVersion: "1.2.0", defaults: defaults) { _ in Self.release("v1.4.0") }
+        #expect(relaunched.takeNotice() == nil)
+        await relaunched.checkNow()
+        #expect(relaunched.takeNotice()?.version == "1.4.0")
+    }
+
+    @Test("a shorter interval asks again sooner")
+    func shorterInterval() async {
+        let now = Date()
+        let check = UpdateCheck(repository: "o/r", currentVersion: "1.2.0", defaults: Self.defaults(),
+                                interval: 4 * 3600) { _ in Self.release("v1.2.0") }
+        #expect(await check.checkIfDue(now: now) == .upToDate)
+        #expect(await check.checkIfDue(now: now.addingTimeInterval(3 * 3600)) == nil)
+        #expect(await check.checkIfDue(now: now.addingTimeInterval(5 * 3600)) == .upToDate)
+    }
+
     @Test("skipping hides that version until a later one appears")
     func skipping() async {
         let defaults = Self.defaults()

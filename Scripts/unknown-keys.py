@@ -26,6 +26,9 @@ DEFINITION = re.compile(r'^\s*"((?:[^"\\]|\\.)+)"\s*=')
 EXTRA = os.environ.get("LOCALIZATION_EXTRA_USE")
 USES = [USE] + ([re.compile(EXTRA, re.S)] if EXTRA else [])
 MIN_USES = int(os.environ.get("LOCALIZATION_MIN_CALLS", "50"))
+# The catalog's floor: fewer keys than this means the catalog was not read. A young app
+# with a smaller catalog lowers it with LOCALIZATION_MIN_KEYS.
+MIN_KEYS = int(os.environ.get("LOCALIZATION_MIN_KEYS", "20"))
 # `"menu.quit \(name)"` is the key `menu.quit %@` in the catalog: interpolations and the
 # catalog's format specifiers are both reduced to one token before comparing.
 SPECIFIER = re.compile(r'%(?:\d+\$)?[-+ #0]*[\d.]*(?:ll|l|h|hh|z|q)?[@dioufFeEgGxXsc]')
@@ -78,7 +81,7 @@ def defined_keys(paths: list[str]) -> set[str]:
 def main() -> int:
     root = pathlib.Path(sys.argv[1])
     known = {normalised(key) for key in defined_keys(sys.argv[2:])}
-    if len(known) < 20:
+    if len(known) < MIN_KEYS:
         print(f"✗ el catálogo de referencia trajo {len(known)} claves: no se ha leído nada")
         return 2
 

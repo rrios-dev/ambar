@@ -49,6 +49,7 @@ public final class UpdateCheck {
     private var enabledKey: String { "updates.enabled" }
     private var skippedKey: String { "updates.skipped" }
     private var foundKey: String { "updates.found" }
+    private var noticedKey: String { "updates.noticed" }
 
     public init(repository: String, currentVersion: String, defaults: UserDefaults = .standard,
                 interval: TimeInterval = 24 * 3600,
@@ -100,6 +101,15 @@ public final class UpdateCheck {
         defaults.set(try? JSONEncoder().encode(latest), forKey: foundKey)
         available = latest.version == skipped ? nil : latest
         return .available(latest)
+    }
+
+    /// The newer release to bring to the user's attention, once per version: the badge
+    /// stays until it is installed or skipped, but a notice that came back after every
+    /// check would be noise. Returns nil when there is nothing new to say.
+    public func takeNotice() -> AvailableUpdate? {
+        guard let available, defaults.string(forKey: noticedKey) != available.version else { return nil }
+        defaults.set(available.version, forKey: noticedKey)
+        return available
     }
 
     /// "Not this one": the notice goes away until a later version appears.

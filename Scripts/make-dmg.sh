@@ -1,77 +1,88 @@
 #!/bin/bash
 #
-# Empaqueta Ámbar en una imagen de disco con arrastre a Aplicaciones.
+# Packs a macOS app into a disk image with drag-to-Applications. Ámbar's by default;
+# another app passes its bundle through the RELEASE_* variables release.sh documents.
 #
-# POR QUÉ EXISTE
+# WHY IT EXISTS
 #
-# La cadena de publicación producía un `.app` firmado y notarizado, y ahí se detenía: el
-# empaquetado vivía como cuatro líneas de prosa en `docs/initiatives/ambar/lanzamiento.md` que nadie
-# había ejecutado. Es el mismo defecto que `release.sh` vino a arreglar para la firma —un
-# procedimiento que nadie ha corrido es una intención, no un procedimiento—, y quedaba justo
-# el último tramo: lo que el usuario descarga y abre.
+# The release chain produced a signed, notarized `.app` and stopped there: packing lived
+# as four lines of prose in `docs/initiatives/ambar/lanzamiento.md` that nobody had run.
+# The same defect `release.sh` came to fix for signing — a procedure nobody has run is an
+# intention, not a procedure — left for the last stretch: what the user downloads and opens.
 #
-# QUÉ PRODUCE
+# WHAT IT PRODUCES
 #
-#   .build/Ambar-<versión>.dmg   comprimido, con el .app y un alias a /Applications
+#   <RELEASE_OUT_DIR>/<Name>-<version>.dmg   compressed, with the .app and an alias to /Applications
 #
-# El DMG se notariza **aparte** del .app: son dos artefactos distintos y Gatekeeper los
-# evalúa por separado. Ver `release.sh dmg`, que hace las dos cosas en orden.
+# The DMG is notarized APART from the .app: two artefacts, judged separately by
+# Gatekeeper. See `release.sh dmg`, which does both in order.
 #
-# USO
+# USAGE
 #
-#   ./Scripts/make-dmg.sh                  # imagen sin firmar (o con la identidad local)
-#   CODESIGN_IDENTITY="Developer ID Application: …" ./Scripts/make-dmg.sh
+#   Scripts/make-dmg.sh                  # unsigned image (or with the local identity)
+#   CODESIGN_IDENTITY="Developer ID Application: …" Scripts/make-dmg.sh
+#
+#   RELEASE_APP             the bundle                  .build/Ambar.app
+#   RELEASE_OUT_DIR         where the image goes        the bundle's folder
+#   RELEASE_VOLUME_NAME     the mounted volume's name   Ámbar
+#   RELEASE_DMG_BACKGROUND  a Swift script that draws   Scripts/make-dmg-background.swift
+#                           the window's background ("" = none)
 #
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP="$ROOT/.build/Ambar.app"
-BUILD="$ROOT/.build"
-VOLUME_NAME="Ámbar"
+SCRIPTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$SCRIPTS/.." && pwd)"
+APP="${RELEASE_APP:-$ROOT/.build/Ambar.app}"
+APP="${APP%/}"
+BUILD="${RELEASE_OUT_DIR:-$(dirname "$APP")}"
+VOLUME_NAME="${RELEASE_VOLUME_NAME:-Ámbar}"
+BACKGROUND="${RELEASE_DMG_BACKGROUND-$SCRIPTS/make-dmg-background.swift}"
+APP_NAME="$(basename "$APP")"
+NAME="${APP_NAME%.app}"
 
 fail() { echo "✗ $1" >&2; exit 1; }
 ok()   { echo "✓ $1"; }
 
 # ---------------------------------------------------------------------------
-# 1. Lo que se va a empaquetar tiene que ser publicable
+# 1. What is packed must be releasable
 # ---------------------------------------------------------------------------
 
-test -d "$APP" || fail "no hay bundle en $APP — corre primero ./Scripts/make-app.sh release"
+test -d "$APP" || fail "no bundle at $APP — build it first (make-app.sh release)"
 
 PLIST="$APP/Contents/Info.plist"
 VERSION="$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$PLIST" 2>/dev/null || true)"
-test -n "$VERSION" || fail "el bundle no declara CFBundleShortVersionString"
+test -n "$VERSION" || fail "the bundle declares no CFBundleShortVersionString"
 
-# Hardened Runtime: si falta, el DMG llevaría dentro algo que la notarización rechaza, y eso
-# se descubriría después de subirlo. La salida se captura en una variable en lugar de
-# encadenar `grep -q`: con `set -o pipefail`, grep cierra el pipe al primer acierto, codesign
-# recibe SIGPIPE y la comprobación da falso justo cuando encuentra lo que busca. Es la misma
-# trampa documentada en `make-app.sh` y en `release.sh`, y esta es la cuarta vez que hay que
-# tenerla en cuenta.
-#
-# Y se reintenta, porque un `codesign -d` inmediatamente después de firmar puede leer la
-# firma anterior cacheada (medido: 1 de cada 3 ejecuciones).
-SIGN_INFO=""
+# Hardened Runtime: without it the DMG would carry something notarization refuses, found
+# out after the upload. Read into a variable, never piped into `grep -q` (under pipefail,
+# grep closes the pipe at its first match, codesign gets SIGPIPE and the check is false
+# exactly when it finds what it looks for), and retried, because a `codesign -d` right
+# after signing can read the previous, cached signature (measured: one run in three).
+# The flag is read from the CodeDirectory's flags, not anywhere in the output: the output
+# names the bundle's path, and a path holding "runtime" would pass without the flag.
+SIGN_FLAGS=""
 for _ in 1 2 3 4 5; do
   SIGN_INFO="$(codesign -d --verbose=4 "$APP" 2>&1 || true)"
-  case "$SIGN_INFO" in
-    *runtime*) break ;;
+  SIGN_FLAGS="$(sed -n 's/^CodeDirectory .*flags=0x[0-9a-fA-F]*(\([^)]*\)).*/\1/p' <<<"$SIGN_INFO")"
+  case ",$SIGN_FLAGS," in
+    *,runtime,*) break ;;
   esac
   sleep 0.4
 done
-case "$SIGN_INFO" in
-  *runtime*) ok "el bundle lleva Hardened Runtime" ;;
-  *) fail "el bundle no lleva Hardened Runtime: no sería notarizable dentro del DMG" ;;
+case ",$SIGN_FLAGS," in
+  *,runtime,*) ok "the bundle carries the Hardened Runtime" ;;
+  *) fail "the bundle has no Hardened Runtime: it could not be notarized inside the DMG" ;;
 esac
 
-DMG="$BUILD/Ambar-$VERSION.dmg"
+mkdir -p "$BUILD"
+DMG="$BUILD/$NAME-$VERSION.dmg"
 STAGE="$BUILD/dmg-stage"
-TEMP_DMG="$BUILD/Ambar-$VERSION-rw.dmg"
+TEMP_DMG="$BUILD/$NAME-$VERSION-rw.dmg"
 MOUNT_POINT=""
 
 # ---------------------------------------------------------------------------
-# Limpieza: un montaje colgado bloquea el fichero y el siguiente intento falla con un
-# «resource busy» que no dice nada de la causa.
+# Cleanup: a hung mount locks the file and the next attempt fails with a "resource busy"
+# that says nothing about the cause.
 # ---------------------------------------------------------------------------
 
 detach_quietly() {
@@ -93,58 +104,65 @@ cleanup() {
 trap cleanup EXIT
 
 # ---------------------------------------------------------------------------
-# 2. El contenido de la imagen
+# 2. The image's content
 # ---------------------------------------------------------------------------
 
 rm -rf "$STAGE"
-mkdir -p "$STAGE/.background"
+mkdir -p "$STAGE"
 
-# `ditto` y no `cp -R`: conserva los atributos extendidos y la estructura del bundle, que es
-# lo que mantiene la firma válida dentro de la imagen.
-ditto "$APP" "$STAGE/Ambar.app"
+# `ditto`, not `cp -R`: it keeps the extended attributes and the bundle's structure, which
+# is what keeps the signature valid inside the image.
+ditto "$APP" "$STAGE/$APP_NAME"
 
-# El alias a Aplicaciones es lo que convierte la imagen en un instalador: arrastrar de un
-# icono al otro es el gesto que todo el mundo en macOS ya conoce.
+# The alias to Applications is what makes the image an installer: dragging from one icon
+# to the other is the gesture everyone on macOS already knows.
 ln -s /Applications "$STAGE/Applications"
 
-swift "$ROOT/Scripts/make-dmg-background.swift" "$STAGE/.background/background.png" \
-  || fail "no se pudo generar el fondo de la ventana"
+HAS_BACKGROUND="no"
+if [ -n "$BACKGROUND" ]; then
+  mkdir -p "$STAGE/.background"
+  swift "$BACKGROUND" "$STAGE/.background/background.png" \
+    || fail "could not draw the window's background"
+  HAS_BACKGROUND="yes"
+fi
 
-ok "contenido preparado: Ambar.app $VERSION + alias a /Applications"
+ok "content ready: $APP_NAME $VERSION + alias to /Applications"
 
 # ---------------------------------------------------------------------------
-# 3. Imagen de lectura/escritura para poder darle forma a la ventana
+# 3. A read/write image, so the window can be laid out
 # ---------------------------------------------------------------------------
 
 rm -f "$TEMP_DMG"
-# HFS+ y no APFS: una imagen APFS no se puede abrir en versiones anteriores de macOS, y el
-# mensaje que ve quien lo intenta no explica por qué. El sistema de ficheros de la imagen no
-# tiene nada que ver con el requisito de macOS 26 de la app.
+# HFS+, not APFS: an APFS image does not open on older macOS, and the message whoever
+# tries sees does not say why. The image's file system has nothing to do with the app's
+# minimum macOS.
 hdiutil create -srcfolder "$STAGE" -volname "$VOLUME_NAME" -fs HFS+ \
   -format UDRW -ov -quiet "$TEMP_DMG" \
-  || fail "hdiutil no pudo crear la imagen de trabajo"
+  || fail "hdiutil could not create the working image"
 
 MOUNT_POINT="/Volumes/$VOLUME_NAME"
-# `-nobrowse` para que no aparezca en la barra lateral mientras se prepara.
-hdiutil attach "$TEMP_DMG" -nobrowse -quiet || fail "no se pudo montar la imagen de trabajo"
+# `-nobrowse` so it does not show in the sidebar while it is laid out.
+hdiutil attach "$TEMP_DMG" -nobrowse -quiet || fail "could not mount the working image"
 
 # ---------------------------------------------------------------------------
-# 4. La ventana — cosmética, y por tanto no bloqueante
+# 4. The window — cosmetic, and therefore not blocking
 # ---------------------------------------------------------------------------
 #
-# Posicionar iconos y poner el fondo solo se puede hacer pidiéndoselo al Finder por
-# AppleScript, y eso exige permiso de Automatización: en un CI, o en una sesión sin ese
-# permiso concedido, `osascript` falla con -1743. Ese fallo **no** invalida el DMG —seguirá
-# teniendo la app y el alias, que es lo que hace falta para instalar—, así que se avisa y se
-# sigue. Lo que no se hace es fingir que salió bien.
+# Placing icons and setting the background can only be asked of the Finder through
+# AppleScript, which needs the Automation permission: in CI, or a session without it,
+# `osascript` fails with -1743. That failure does NOT invalidate the DMG — it still holds
+# the app and the alias, which is what installing needs — so it warns and goes on. What
+# it does not do is pretend it worked.
 #
-# Las coordenadas están calculadas contra el tamaño del fondo (620×400 en
-# `make-dmg-background.swift`): si cambia uno, hay que cambiar el otro.
+# The coordinates are computed against the background's size (620×400 in
+# `make-dmg-background.swift`): if one changes, so must the other.
 
 LAYOUT_APPLIED="no"
-if osascript - "$VOLUME_NAME" <<'APPLESCRIPT' >/dev/null 2>&1
+if osascript - "$VOLUME_NAME" "$APP_NAME" "$HAS_BACKGROUND" <<'APPLESCRIPT' >/dev/null 2>&1
 on run argv
   set volumeName to item 1 of argv
+  set appName to item 2 of argv
+  set hasBackground to item 3 of argv
   tell application "Finder"
     tell disk volumeName
       open
@@ -155,8 +173,10 @@ on run argv
       set viewOptions to the icon view options of container window
       set arrangement of viewOptions to not arranged
       set icon size of viewOptions to 96
-      set background picture of viewOptions to file ".background:background.png"
-      set position of item "Ambar.app" of container window to {170, 170}
+      if hasBackground is "yes" then
+        set background picture of viewOptions to file ".background:background.png"
+      end if
+      set position of item appName of container window to {170, 170}
       set position of item "Applications" of container window to {450, 170}
       close
       open
@@ -167,12 +187,12 @@ on run argv
 end run
 APPLESCRIPT
 then
-  LAYOUT_APPLIED="sí"
-  ok "ventana compuesta: fondo, iconos a 96 px y barra de herramientas oculta"
+  LAYOUT_APPLIED="yes"
+  ok "window laid out: icons at 96 px, toolbar hidden, background: $HAS_BACKGROUND"
 else
-  echo "  AVISO: no se pudo componer la ventana (el Finder necesita permiso de"
-  echo "  Automatización, y en CI no lo hay). El DMG es válido igualmente: lleva"
-  echo "  Ambar.app y el alias a /Applications, sin fondo ni posiciones."
+  echo "  WARNING: the window could not be laid out (the Finder needs the Automation"
+  echo "  permission, and CI has none). The DMG is valid all the same: it holds"
+  echo "  $APP_NAME and the alias to /Applications, without positions or background."
 fi
 
 sync
@@ -180,80 +200,82 @@ detach_quietly "$MOUNT_POINT"
 MOUNT_POINT=""
 
 # ---------------------------------------------------------------------------
-# 5. Comprimir
+# 5. Compress
 # ---------------------------------------------------------------------------
 
 rm -f "$DMG"
 hdiutil convert "$TEMP_DMG" -format UDZO -imagekey zlib-level=9 -ov -quiet -o "$DMG" \
-  || fail "no se pudo comprimir la imagen"
+  || fail "could not compress the image"
 rm -f "$TEMP_DMG"
-ok "imagen comprimida: $(du -h "$DMG" | cut -f1)"
+ok "image compressed: $(du -h "$DMG" | cut -f1)"
 
 # ---------------------------------------------------------------------------
-# 6. Firmar la imagen, si hay con qué
+# 6. Sign the image, when there is something to sign it with
 # ---------------------------------------------------------------------------
 #
-# El DMG se firma **además** del .app. Sin firma, Gatekeeper avisa al abrir la imagen aunque
-# la app de dentro esté notarizada, y el usuario ve el aviso antes de llegar a la app.
+# The DMG is signed IN ADDITION to the .app. Unsigned, Gatekeeper warns when the image is
+# opened even though the app inside is notarized, and the user sees the warning first.
 
 IDENTITY="${CODESIGN_IDENTITY:-${DEVELOPER_ID:-}}"
-# By SHA-1 when given a name: on macOS 27 a name with a non-ASCII letter ("Ríos") reaches
-# codesign mis-encoded and it finds no identity.
+# By SHA-1 when given a name: on macOS 27 a name with a non-ASCII letter reaches codesign
+# mis-encoded and it finds no identity.
 if [ -n "$IDENTITY" ] && ! [[ "$IDENTITY" =~ ^[0-9A-F]{40}$ ]]; then
   KEYCHAIN_IDENTITIES="$(security find-identity -p codesigning 2>/dev/null || true)"
   HASH="$(awk -v name="\"$IDENTITY\"" 'index($0, name) { print $2; exit }' <<<"$KEYCHAIN_IDENTITIES")"
   [ -n "$HASH" ] && IDENTITY="$HASH"
 fi
 if [ -n "$IDENTITY" ]; then
-  # `--timestamp` porque la notarización exige sello seguro. Con identidad ad-hoc esto
-  # fallaría, y por eso solo se firma cuando hay una identidad de verdad declarada.
+  # `--timestamp` because notarization requires a secure one. With an ad hoc identity it
+  # would fail, which is why the image is signed only when a real identity is declared.
   codesign --force --sign "$IDENTITY" --timestamp "$DMG" \
-    || fail "no se pudo firmar el DMG con «$IDENTITY»"
-  codesign --verify --strict "$DMG" || fail "la firma del DMG no verifica"
-  ok "DMG firmado con «$IDENTITY»"
+    || fail "could not sign the DMG with «$IDENTITY»"
+  codesign --verify --strict "$DMG" || fail "the DMG's signature does not verify"
+  ok "DMG signed with «$IDENTITY»"
 else
-  echo "  AVISO: DMG sin firmar. Para publicarlo hace falta"
-  echo "  CODESIGN_IDENTITY=\"Developer ID Application: …\" y notarizarlo después."
+  echo "  WARNING: unsigned DMG. Releasing it needs"
+  echo "  CODESIGN_IDENTITY=\"Developer ID Application: …\" and notarizing it afterwards."
 fi
 
 # ---------------------------------------------------------------------------
-# 7. Verificar el resultado montándolo, que es lo que hará el usuario
+# 7. Check the result by mounting it, as the user will
 # ---------------------------------------------------------------------------
 #
-# Comprobar el fichero producido y no el proceso que lo produjo: un DMG que se crea sin
-# errores puede llevar dentro un alias roto o un bundle al que le falta algo.
+# Check the file produced, not the process that produced it: a DMG created without errors
+# can still hold a broken alias or a bundle missing something.
 
-# El punto de montaje va en el directorio temporal del sistema y **no** dentro de `.build`:
-# medido, montar en un punto que vive en otro volumen —el repositorio está en un disco
-# externo— falla con un CRC esperado y un `attach` que no completa, y el mensaje no menciona
-# nada de volúmenes. En `/tmp` monta a la primera.
-VERIFY_POINT="$(mktemp -d "${TMPDIR:-/tmp}/ambar-dmg-verify.XXXXXX")"
+# The mount point lives in the system's temporary folder and NOT inside the build folder:
+# measured, mounting at a point on another volume — the repository is on an external
+# disk — fails with an expected CRC and an `attach` that never completes, and the message
+# says nothing about volumes. In the temporary folder it mounts the first time.
+VERIFY_POINT="$(mktemp -d "${TMPDIR:-/tmp}/$NAME-dmg-verify.XXXXXX")"
 hdiutil attach "$DMG" -nobrowse -readonly -quiet -mountpoint "$VERIFY_POINT" \
-  || fail "el DMG producido no se puede montar"
+  || fail "the DMG produced cannot be mounted"
 MOUNT_POINT="$VERIFY_POINT"
 
-test -d "$VERIFY_POINT/Ambar.app" || fail "el DMG no contiene Ambar.app"
-test -L "$VERIFY_POINT/Applications" || fail "el DMG no contiene el alias a Aplicaciones"
+test -d "$VERIFY_POINT/$APP_NAME" || fail "the DMG does not contain $APP_NAME"
+test -L "$VERIFY_POINT/Applications" || fail "the DMG does not contain the alias to Applications"
 LINK_TARGET="$(readlink "$VERIFY_POINT/Applications")"
 [ "$LINK_TARGET" = "/Applications" ] \
-  || fail "el alias apunta a «$LINK_TARGET» en lugar de a /Applications"
+  || fail "the alias points to «$LINK_TARGET» instead of /Applications"
 
-# La firma del .app tiene que seguir válida **dentro** de la imagen: si el empaquetado
-# hubiera tocado un byte del bundle, esto es lo único que lo detecta.
-codesign --verify --strict "$VERIFY_POINT/Ambar.app" \
-  || fail "la firma del bundle dentro del DMG no verifica"
+# The app's signature must still verify INSIDE the image, nested code included: if packing
+# had touched one byte of the bundle, this is the only thing that would notice.
+codesign --verify --deep --strict "$VERIFY_POINT/$APP_NAME" \
+  || fail "the bundle's signature does not verify inside the DMG"
 
-test -f "$VERIFY_POINT/.background/background.png" || fail "el fondo no viajó dentro del DMG"
+if [ "$HAS_BACKGROUND" = "yes" ]; then
+  test -f "$VERIFY_POINT/.background/background.png" || fail "the background did not travel in the DMG"
+fi
 
 detach_quietly "$VERIFY_POINT"
 MOUNT_POINT=""
 rmdir "$VERIFY_POINT" 2>/dev/null || true
 
-ok "verificado montándolo: app, alias, firma y fondo"
+ok "checked by mounting it: app, alias, signature$([ "$HAS_BACKGROUND" = yes ] && echo ' and background')"
 echo
 echo "▸ $DMG"
-echo "  ventana compuesta: $LAYOUT_APPLIED"
+echo "  window laid out: $LAYOUT_APPLIED"
 echo
-echo "  Siguiente paso para publicar:"
-echo "    xcrun notarytool submit \"$DMG\" --keychain-profile \"${NOTARY_PROFILE:-<perfil>}\" --wait"
+echo "  Next step to release it:"
+echo "    xcrun notarytool submit \"$DMG\" --keychain-profile \"${NOTARY_PROFILE:-<profile>}\" --wait"
 echo "    xcrun stapler staple \"$DMG\""

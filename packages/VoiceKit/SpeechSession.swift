@@ -110,6 +110,7 @@ public actor SpeechSession: TranscriptionSession {
 
     private var onDeviceChange: (@Sendable () -> Void)?
     private var onSessionLimit: (@Sendable () -> Void)?
+    private var onLevel: (@Sendable (Float) -> Void)?
 
     public init(
         locale: Locale,
@@ -501,6 +502,12 @@ public actor SpeechSession: TranscriptionSession {
     /// intermitente.
     var holdsReservationForTesting: Bool { didReserve }
 
+    /// How loud each block of audio is, 0…1 on a speech scale (`AudioLevel`), as it goes
+    /// to the engine: what an interface draws a voice meter with. Set before `start()`.
+    public func setLevelHandler(_ handler: @escaping @Sendable (Float) -> Void) {
+        onLevel = handler
+    }
+
     /// Aviso de que la sesión ha llegado a su duración máxima.
     public func setSessionLimitHandler(_ handler: @escaping @Sendable () -> Void) async {
         onSessionLimit = handler
@@ -612,9 +619,11 @@ public actor SpeechSession: TranscriptionSession {
         self.feed = feedContinuation
 
         let sourceStream = try source.start()
+        let onLevel = self.onLevel
         forwardTask = Task {
             for await input in sourceStream {
                 feedContinuation.yield(input)
+                if let onLevel { onLevel(AudioLevel.of(input.buffer)) }
             }
             // No se cierra aquí: `finish()` aún tiene que meter el silencio.
         }
