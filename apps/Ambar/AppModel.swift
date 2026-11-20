@@ -809,7 +809,7 @@ final class AppModel {
     /// Guarda una transcripción como entrada del historial.
     func recordDictation(_ text: String) {
         guard let ingestor else { return }
-        _ = try? ingestor.ingest(Self.dictationItem(text: text))
+        if (try? ingestor.ingest(Self.dictationItem(text: text))) != nil { usage.count(.dictations) }
     }
 
     func flagMissingPastePermission() {
@@ -862,8 +862,12 @@ final class AppModel {
     /// Agent access over MCP (docs/initiatives/mac-apps-mcp/DESIGN.md): off by default.
     let agents: AgentService
 
-    init(settings: Settings = Settings()) {
+    /// Usage statistics, only after the user's yes (`AmbarUsage`).
+    let usage: UsageReport
+
+    init(settings: Settings = Settings(), usage: UsageReport? = nil) {
         self.settings = settings
+        self.usage = usage ?? AmbarUsage.makeReport()
         self.personalDictionary = PersonalDictionary(
             directory: Self.applicationSupportDirectory()
         )
@@ -1086,6 +1090,7 @@ final class AppModel {
         guard let ingestor else { return }
         do {
             let itemID = try ingestor.ingest(captured)
+            usage.count(.captures)
             if captured.kind == .image, settings.isOCREnabled {
                 Task { [ocrQueue] in
                     await ocrQueue?.enqueue(itemID: itemID)
@@ -1179,6 +1184,7 @@ final class AppModel {
     func stage(item: ClipboardItem, plainText: Bool) -> Bool {
         guard writeToPasteboard(item: item, plainText: plainText) else { return false }
         promote(item: item)
+        usage.count(plainText ? .pastesPlain : .pastes)
         return true
     }
 

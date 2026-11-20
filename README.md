@@ -16,8 +16,11 @@ Hold the same shortcut and speak, and Ámbar writes it for you: dictation runs o
 macOS already ships, so it costs nothing per minute, needs no account or API key, and learns
 the names and terms it gets wrong.
 
-Nothing leaves your Mac. Ámbar has no server, no account and no telemetry, and it makes no
-network requests of its own.
+What you copy and dictate never leaves your Mac. Ámbar has no account. It asks once whether
+you want to share anonymous usage statistics: if you say yes, once a day it sends how many
+times you opened the history, copied, pasted and dictated, its version and your language,
+to our own server in the EU — never what you copy or dictate. If you say no, it makes no
+network requests of its own. Settings changes the answer any time.
 
 ## Features
 
@@ -85,7 +88,7 @@ an item in full — images go downscaled —, read your dictation dictionary, te
 and copy a text to the clipboard; the last two the agent asks you about first. It never
 deletes anything, and what password managers copy is never kept. Off by default; Settings
 shows which agent used what, and when. What the agent reads goes to that agent's model —
-Ámbar itself still makes no network requests.
+Ámbar itself sends nothing but the usage counts, and only if you said yes.
 
 ## Requirements
 

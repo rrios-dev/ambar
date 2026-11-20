@@ -263,6 +263,25 @@ struct SettingsView: View {
                 }
             }
 
+            Section(String(localized: "usage.section", bundle: .localized)) {
+                Toggle(
+                    String(localized: "usage.toggle", bundle: .localized),
+                    isOn: Binding(get: { model.usage.isEnabled }, set: { model.usage.setConsent($0) })
+                )
+                .accessibilityLabel(String(localized: "usage.toggle", bundle: .localized))
+                Text(String(localized: "usage.note", bundle: .localized))
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                if model.usage.isEnabled {
+                    let pending = model.usage.preview().count
+                    Text(pending == 0
+                         ? String(localized: "usage.pending.none", bundle: .localized)
+                         : String(localized: "usage.pending \(pending)", bundle: .localized))
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section(String(localized: "settings.privacy", bundle: .localized)) {
                 Text(String(localized: "settings.privacy_help", bundle: .localized))
                     .font(.system(size: 11))

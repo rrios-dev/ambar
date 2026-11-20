@@ -249,3 +249,14 @@
 "agents.log.refused" = "已拒绝";
 "agents.log.clear" = "清除记录";
 "agents.client.unknown" = "某个智能体";
+
+/* Usage statistics, only after the user's yes (AmbarUsage). */
+"usage.section" = "使用统计";
+"usage.toggle" = "共享匿名使用统计";
+"usage.note" = "每天一次：你打开历史记录、复制、粘贴和听写的次数，Ámbar 和 macOS 的版本以及你的语言，附带一个随机 ID，关闭此选项后即删除。绝不发送你复制或听写的内容，也不发送内容来自哪些 App。保存在我们位于欧盟的自有服务器上。";
+"usage.pending.none" = "没有待发送的数据。";
+"usage.pending %lld" = "待发送的天数：%lld";
+"usage.ask.title" = "帮助改进 Ámbar？";
+"usage.ask.body" = "Ámbar 可以每天发送一次你使用每项功能的次数、版本和你的语言。绝不发送你复制或听写的内容。你可以随时在“设置”中更改。";
+"usage.ask.yes" = "共享统计";
+"usage.ask.no" = "不用了";

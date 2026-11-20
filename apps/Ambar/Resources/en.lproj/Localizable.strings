@@ -251,3 +251,14 @@
 "agents.log.refused" = "Refused";
 "agents.log.clear" = "Clear log";
 "agents.client.unknown" = "An agent";
+
+/* Usage statistics, only after the user's yes (AmbarUsage). */
+"usage.section" = "Usage statistics";
+"usage.toggle" = "Share anonymous usage statistics";
+"usage.note" = "Once a day: how many times you opened the history, copied, pasted and dictated, the Ámbar and macOS versions and your language, with a random id that is deleted when you turn this off. Never what you copy or dictate, nor which apps it comes from. Kept on our own server in the EU.";
+"usage.pending.none" = "Nothing waiting to be sent.";
+"usage.pending %lld" = "Days waiting to be sent: %lld.";
+"usage.ask.title" = "Help improve Ámbar?";
+"usage.ask.body" = "Ámbar can send, once a day, how many times you used each feature, its version and your language. Never what you copy or dictate. You can change it any time in Settings.";
+"usage.ask.yes" = "Share statistics";
+"usage.ask.no" = "No, thanks";

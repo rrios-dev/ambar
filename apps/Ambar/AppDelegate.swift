@@ -12,6 +12,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var settingsWindow: NSWindow?
     private var hotKeyID: UInt32?
     private let model = AppModel()
+    private var usageTimer: Timer?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         #if DEBUG
@@ -63,11 +64,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // pide un paso que antes cuenta para qué sirve. Si el usuario ya vio la
         // presentación, este camino sigue siendo el correcto: la app arranca y, si el
         // permiso falta, lo pide una vez.
-        if let onboarding, !suppressesPrompts, OnboardingController.shouldPresent(settings: model.settings) {
-            onboarding.present()
+        let presentsOnboarding = onboarding != nil && !suppressesPrompts
+            && OnboardingController.shouldPresent(settings: model.settings)
+        if presentsOnboarding {
+            onboarding?.present()
         } else if !Paster.canPaste && !suppressesPrompts {
             Paster.requestAccessibilityPermission()
         }
+        startUsageReports(askNow: !presentsOnboarding && !suppressesPrompts)
+    }
+
+    /// Counts the launch (kept only after a yes), asks once a few seconds after a launch that
+    /// is not the first-run tour (the tour has its own questions; the next launch asks), and
+    /// sends the finished days now and every six hours. Debug builds never send.
+    private func startUsageReports(askNow: Bool) {
+        model.usage.count(.launches)
+        if askNow, model.usage.consent == nil {
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .seconds(5))
+                guard let self, self.model.usage.consent == nil, Paster.canPaste else { return }
+                AmbarUsage.ask(self.model.usage)
+            }
+        }
+        #if !DEBUG
+        Task { await model.usage.flush() }
+        usageTimer = Timer.scheduledTimer(withTimeInterval: 6 * 3600, repeats: true) { [weak self] _ in
+            Task { @MainActor in await self?.model.usage.flush() }
+        }
+        #endif
     }
 
     /// Monta el presentador y deja que Ajustes pueda volver a llamarlo.
@@ -437,13 +461,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         NSApp.orderFrontStandardAboutPanel(
             options: [
                 .applicationName: "Ámbar",
-                .credits: NSAttributedString(
-                    string: String(localized: "about.tagline", bundle: .localized),
-                    attributes: [
-                        .font: NSFont.systemFont(ofSize: 11),
-                        .foregroundColor: NSColor.secondaryLabelColor,
-                    ]
-                ),
+                // The tagline, then the author's website and mailbox as links.
+                .credits: AuthorContact.credits(
+                    tagline: String(localized: "about.tagline", bundle: .localized)),
             ]
         )
     }

@@ -249,3 +249,14 @@
 "agents.log.refused" = "Refusé";
 "agents.log.clear" = "Effacer le journal";
 "agents.client.unknown" = "Un agent";
+
+/* Usage statistics, only after the user's yes (AmbarUsage). */
+"usage.section" = "Statistiques d’utilisation";
+"usage.toggle" = "Partager des statistiques d’utilisation anonymes";
+"usage.note" = "Une fois par jour : combien de fois vous avez ouvert l’historique, copié, collé et dicté, les versions d’Ámbar et de macOS et votre langue, avec un identifiant aléatoire supprimé si vous désactivez cette option. Jamais ce que vous copiez ou dictez, ni les apps d’où cela vient. Conservé sur notre propre serveur dans l’UE.";
+"usage.pending.none" = "Rien en attente d’envoi.";
+"usage.pending %lld" = "Jours en attente d’envoi : %lld.";
+"usage.ask.title" = "Aider à améliorer Ámbar ?";
+"usage.ask.body" = "Ámbar peut envoyer, une fois par jour, combien de fois vous avez utilisé chaque fonction, sa version et votre langue. Jamais ce que vous copiez ou dictez. Vous pouvez changer cela à tout moment dans les Réglages.";
+"usage.ask.yes" = "Partager les statistiques";
+"usage.ask.no" = "Non, merci";

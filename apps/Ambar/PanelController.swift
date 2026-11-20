@@ -230,6 +230,7 @@ final class PanelController {
     }
 
     func show(_ invocation: Invocation = .hotKey) {
+        model.usage.count(.panelOpens)
         let panel = panel ?? makePanel()
         self.panel = panel
 
