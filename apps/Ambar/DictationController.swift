@@ -106,6 +106,11 @@ final class DictationController {
     /// porque ahí el usuario está esperando una respuesta.
     private let isReady: @MainActor () -> Bool
 
+    /// Called when the engine answers "model missing" after its own resync. Returns
+    /// `true` when the app knows the model is installed and is restarting to see it
+    /// again; the failure is then told as that, not as a model to install.
+    private let recoverStaleModel: @MainActor () -> Bool
+
     /// The user's personal vocabulary, when dictation has one.
     ///
     /// Optional and injected: every existing test builds this controller without a
@@ -251,6 +256,7 @@ final class DictationController {
         permission: @escaping @MainActor () -> MicrophonePermission = { MicrophoneAuthorization.current },
         atypicalSpeech: @escaping @MainActor () -> Bool = { false },
         isReady: @escaping @MainActor () -> Bool = { true },
+        recoverStaleModel: @escaping @MainActor () -> Bool = { false },
         vocabulary: PersonalDictionary? = nil,
         learnsVocabulary: @escaping @MainActor () -> Bool = { true },
         learningFeedbackDuration: Duration = DictationController.defaultLearningFeedbackDuration,
@@ -268,6 +274,7 @@ final class DictationController {
         self.permission = permission
         self.atypicalSpeech = atypicalSpeech
         self.isReady = isReady
+        self.recoverStaleModel = recoverStaleModel
         self.gesture = gesture
         self.deliver = deliver
         self.onStateChange = onStateChange
@@ -781,6 +788,7 @@ final class DictationController {
         switch failure {
         case .permissionDenied: String(localized: "dictation.failed.permission", bundle: .localized)
         case .modelUnavailable: String(localized: "dictation.failed.model", bundle: .localized)
+        case .speechModelsRefreshed: String(localized: "dictation.failed.models_refreshed", bundle: .localized)
         case .audioDeviceChanged: String(localized: "dictation.failed.device", bundle: .localized)
         case .noSpeechDetected: String(localized: "dictation.failed.no_speech", bundle: .localized)
         case .languageQuotaFull: String(localized: "dictation.failed.quota", bundle: .localized)
@@ -1127,7 +1135,10 @@ final class DictationController {
             .sessionLimitReached
         case DictationEngineError.localeUnsupported,
              DictationEngineError.modelNotInstalled:
-            .modelUnavailable
+            // A model this process has seen installed cannot be missing: the system
+            // refreshed its speech assets underneath the running app, and every later
+            // dictation failed the same way until the user quit and reopened Ámbar.
+            recoverStaleModel() ? .speechModelsRefreshed : .modelUnavailable
         default:
             .engineFailed
         }

@@ -1598,6 +1598,27 @@ struct DictationControllerTests {
         #expect(controller.lastFailure == .modelUnavailable, "estado: \(controller.state)")
     }
 
+    /// A model the app has seen installed cannot be missing: the system refreshed its
+    /// speech assets under the running app. The failure says Ámbar is restarting, not
+    /// that a model is missing, and the recovery is asked exactly once.
+    @Test("a model seen installed and now missing is told as a restart, not as a missing model")
+    func staleModelIsRecoveredByRestarting() async throws {
+        var recoveries = 0
+        let controller = DictationController(
+            engine: FakeEngine(session: UnpreparableSession()),
+            gesture: HoldGesture(watchedFlags: [.command], threshold: .milliseconds(50)),
+            deliver: { _ in },
+            permission: { .granted },
+            recoverStaleModel: { recoveries += 1; return true }
+        )
+
+        controller.startWithoutGesture(locale: Locale(identifier: "es-ES"), mode: .live)
+        await Self.waitUntil { controller.lastFailure != nil }
+
+        #expect(controller.lastFailure == .speechModelsRefreshed, "estado: \(controller.state)")
+        #expect(recoveries == 1)
+    }
+
     /// El camino accesible **no** se cancela por mover el ratón.
     ///
     /// Es la regresión R2→R3, y volvía a estar sin red: quitar la guarda `requiresHold`

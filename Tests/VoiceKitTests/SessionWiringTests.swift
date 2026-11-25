@@ -208,10 +208,61 @@ struct SessionWiringTests {
     func missingModelStillFails() async {
         let catalog = FlickeringCatalog(installedAfterReserves: .max)
         let confirmed = await SpeechSession.confirmInstalled(
-            locale: Self.locale, in: catalog, attempts: 3, pause: .zero
+            locale: Self.locale, in: catalog, attempts: 3, pause: .zero,
+            resyncAttempts: 3, resyncPause: .zero
         )
         #expect(!confirmed)
-        #expect(await catalog.reserves == 2, "retried more than the cap")
+        // Two quick re-reserves, one after the release, two slow re-reserves.
+        #expect(await catalog.reserves == 5, "retried more than the cap")
+    }
+
+    /// The process believes it holds the language, so `reserve` is a no-op, while the
+    /// system dropped the reservation on its side: the model reads as missing until the
+    /// reservation is released and taken again. The state a long-running Ámbar reached
+    /// after the system refreshed its speech assets, which only a relaunch cured.
+    actor StaleReservationCatalog: ModelCatalog {
+        private var resynced = false
+        private var released = false
+        private(set) var releases = 0
+        private(set) var retentionEnded = false
+        func supportedLocale(equivalentTo locale: Locale) async -> Locale? { locale }
+        func availability(forLocale locale: Locale) async -> ModelAvailability {
+            resynced ? .installed : .supported
+        }
+        func installModel(
+            forLocale locale: Locale,
+            onProgress: @Sendable @escaping (Double) -> Void
+        ) async throws {}
+        func installationSize(forLocale locale: Locale) async -> Int64? { nil }
+        func reserve(locale: Locale) async throws -> Bool {
+            guard released else { return false }
+            resynced = true
+            return true
+        }
+        func release(locale: Locale) async { releases += 1; released = true }
+        func reservation() async -> (maximum: Int, reserved: [Locale]) { (5, []) }
+        func endModelRetention() async { retentionEnded = true }
+    }
+
+    @Test("a reservation the system dropped is taken back by releasing and reserving again")
+    func staleReservationIsResynced() async {
+        let catalog = StaleReservationCatalog()
+        let confirmed = await SpeechSession.confirmInstalled(
+            locale: Self.locale, in: catalog, pause: .zero, resyncPause: .zero
+        )
+        #expect(confirmed, "re-reserving alone never refreshes a reservation the process thinks it holds")
+        #expect(await catalog.releases == 1)
+        #expect(await catalog.retentionEnded)
+    }
+
+    @Test("without the resync, the stale reservation still reads as a missing model")
+    func staleReservationNeedsTheResync() async {
+        let catalog = StaleReservationCatalog()
+        let confirmed = await SpeechSession.confirmInstalled(
+            locale: Self.locale, in: catalog, pause: .zero, resyncAttempts: 0
+        )
+        #expect(!confirmed)
+        #expect(await catalog.releases == 0)
     }
 
     @Test("an unsupported language is final and is not retried")

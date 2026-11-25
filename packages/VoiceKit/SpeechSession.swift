@@ -205,27 +205,63 @@ public actor SpeechSession: TranscriptionSession {
     /// there was nothing to install.
     ///
     /// Only `supported` and `downloading` are retried. `unsupported` is final, and
-    /// `installed` is the answer. A model that is really missing costs `attempts - 1`
-    /// short pauses before the same error as before.
+    /// `installed` is the answer.
+    ///
+    /// When the quick retries still read "not installed", the reservation is cycled once
+    /// — released, the retained model dropped, reserved again — and the status is asked
+    /// again at a slower pace. The quick retries only re-reserve, and `reserve` answers
+    /// `false` without doing anything when the process believes it already holds the
+    /// language, so a reservation the system dropped on its side is never taken back by
+    /// them. That is the state a long-running Ámbar reached after the system refreshed
+    /// its speech asset catalog underneath it (seen 2026-11-25: catalog rewritten at
+    /// 08:02, the app running since the day before): every dictation answered "Falta el
+    /// modelo de voz" until the app was quit and opened again.
+    ///
+    /// A model that is really missing costs `attempts - 1` short pauses plus
+    /// `resyncAttempts` slower ones before the same error as before.
     static func confirmInstalled(
         locale: Locale,
         in catalog: any ModelCatalog,
         attempts: Int = 3,
-        pause: Duration = .milliseconds(150)
+        pause: Duration = .milliseconds(150),
+        resyncAttempts: Int = 3,
+        resyncPause: Duration = .milliseconds(300)
     ) async -> Bool {
+        switch await pollInstalled(locale: locale, in: catalog, attempts: attempts, pause: pause) {
+        case .installed: return true
+        case .unsupported: return false
+        case .missing: break
+        }
+        guard resyncAttempts > 0 else { return false }
+        await catalog.release(locale: locale)
+        await catalog.endModelRetention()
+        _ = try? await catalog.reserve(locale: locale)
+        return await pollInstalled(
+            locale: locale, in: catalog, attempts: resyncAttempts, pause: resyncPause
+        ) == .installed
+    }
+
+    private enum InstalledAnswer { case installed, unsupported, missing }
+
+    private static func pollInstalled(
+        locale: Locale,
+        in catalog: any ModelCatalog,
+        attempts: Int,
+        pause: Duration
+    ) async -> InstalledAnswer {
         for attempt in 1...max(attempts, 1) {
             switch await catalog.availability(forLocale: locale) {
             case .installed:
-                return true
+                return .installed
             case .unsupported:
-                return false
+                return .unsupported
             case .supported, .downloading:
-                guard attempt < attempts else { return false }
+                guard attempt < attempts else { return .missing }
                 _ = try? await catalog.reserve(locale: locale)
                 try? await Task.sleep(for: pause)
             }
         }
-        return false
+        return .missing
     }
 
     public func prepare() async throws {

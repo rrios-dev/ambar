@@ -33,6 +33,7 @@ final class Settings {
         static let capabilitySystem = "dictation.capability.system"
         static let holdGestureEnabled = "dictation.holdGesture"
         static let onboardingCompletedVersion = "onboarding.completedVersion"
+        static let staleModelRestartAt = "dictation.staleModelRestartAt"
     }
 
     private let defaults: UserDefaults
@@ -262,6 +263,17 @@ final class Settings {
     /// not per correction.
     var isDictionaryLearningEnabled: Bool {
         didSet { defaults.set(isDictionaryLearningEnabled, forKey: Key.dictionaryLearning) }
+    }
+
+    /// When Ámbar last restarted itself because the system's speech assets changed under
+    /// it. Stored, not in memory: the restart wipes memory, and this is what stops a
+    /// model that keeps reading as missing from restarting the app in a loop.
+    var lastStaleModelRestart: Date? {
+        get {
+            let seconds = defaults.double(forKey: Key.staleModelRestartAt)
+            return seconds > 0 ? Date(timeIntervalSince1970: seconds) : nil
+        }
+        set { defaults.set(newValue?.timeIntervalSince1970 ?? 0, forKey: Key.staleModelRestartAt) }
     }
 
     /// ¿Se dispara el dictado manteniendo el atajo?

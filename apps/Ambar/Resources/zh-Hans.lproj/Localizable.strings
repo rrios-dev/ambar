@@ -161,6 +161,7 @@
 "menu.pause_remaining" = "暂停还剩 %lld 分钟";
 "dictation.failed.permission" = "Ámbar 没有麦克风权限。";
 "dictation.failed.model" = "缺少语音模型。";
+"dictation.failed.models_refreshed" = "系统更新了语音模型。Ámbar 正在重新启动，请稍后再听写。";
 "dictation.failed.device" = "语音输入过程中麦克风已更换。";
 "dictation.discard" = "放弃";
 "dictation.failed.no_speech" = "没有听到任何声音。请检查麦克风后重试。";
@@ -260,3 +261,19 @@
 "usage.ask.body" = "Ámbar 可以每天发送一次你使用每项功能的次数、版本和你的语言。绝不发送你复制或听写的内容。你可以随时在“设置”中更改。";
 "usage.ask.yes" = "共享统计";
 "usage.ask.no" = "不用了";
+
+/* Updates */
+"updates.section" = "更新";
+"updates.toggle" = "自动检查更新";
+"updates.check_now" = "立即检查";
+"updates.checking" = "正在检查…";
+"updates.failed" = "无法检查。请检查网络连接。";
+"updates.current %@" = "你使用的是 %@ 版。";
+"updates.available %@" = "有新版本：%@。";
+"updates.install" = "立即更新";
+"menu.update %@" = "将 Ámbar 更新到 %@";
+"menu.update.skip" = "跳过此版本";
+"update.alert.title %@" = "Ámbar 有新版本：%@";
+"update.alert.body" = "下载后会核验作者签名，然后 Ámbar 以新版本重新启动。历史记录不受影响。";
+"update.alert.install" = "更新";
+"update.alert.later" = "稍后";

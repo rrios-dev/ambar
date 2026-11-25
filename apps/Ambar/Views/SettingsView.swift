@@ -263,6 +263,8 @@ struct SettingsView: View {
                 }
             }
 
+            UpdatesSection(updates: model.updates)
+
             Section(String(localized: "usage.section", bundle: .localized)) {
                 Toggle(
                     String(localized: "usage.toggle", bundle: .localized),

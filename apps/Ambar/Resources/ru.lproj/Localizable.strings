@@ -162,6 +162,7 @@
 "menu.pause_remaining" = "Осталось %lld мин паузы";
 "dictation.failed.permission" = "У Ámbar нет доступа к микрофону.";
 "dictation.failed.model" = "Отсутствует голосовая модель.";
+"dictation.failed.models_refreshed" = "Система обновила речевую модель. Ámbar перезапускается — продиктуйте ещё раз через мгновение.";
 "dictation.failed.device" = "Микрофон сменился во время диктовки.";
 "dictation.discard" = "Отменить";
 "dictation.failed.no_speech" = "Ничего не слышно. Проверьте микрофон и повторите попытку.";
@@ -261,3 +262,19 @@
 "usage.ask.body" = "Ámbar может раз в день отправлять, сколько раз вы использовали каждую функцию, версию и ваш язык. Никогда — то, что вы копируете или диктуете. Это можно изменить в любой момент в Настройках.";
 "usage.ask.yes" = "Отправлять статистику";
 "usage.ask.no" = "Нет, спасибо";
+
+/* Updates */
+"updates.section" = "Обновления";
+"updates.toggle" = "Проверять обновления автоматически";
+"updates.check_now" = "Проверить сейчас";
+"updates.checking" = "Проверка…";
+"updates.failed" = "Не удалось проверить. Проверьте подключение.";
+"updates.current %@" = "У вас версия %@.";
+"updates.available %@" = "Доступна новая версия: %@.";
+"updates.install" = "Обновить сейчас";
+"menu.update %@" = "Обновить Ámbar до %@";
+"menu.update.skip" = "Пропустить эту версию";
+"update.alert.title %@" = "Доступна новая версия Ámbar: %@";
+"update.alert.body" = "Она загружается, проверяется подпись автора, и Ámbar перезапускается. История не затрагивается.";
+"update.alert.install" = "Обновить";
+"update.alert.later" = "Позже";

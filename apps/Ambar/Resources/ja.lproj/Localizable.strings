@@ -161,6 +161,7 @@
 "menu.pause_remaining" = "一時停止はあと %lld 分";
 "dictation.failed.permission" = "Ámbar にマイクの許可がありません。";
 "dictation.failed.model" = "音声モデルがありません。";
+"dictation.failed.models_refreshed" = "システムが音声モデルを更新しました。Ámbar を再起動します。少し待ってからもう一度音声入力してください。";
 "dictation.failed.device" = "音声入力中にマイクが変わりました。";
 "dictation.discard" = "破棄";
 "dictation.failed.no_speech" = "何も聞こえませんでした。マイクを確認してもう一度お試しください。";
@@ -260,3 +261,19 @@
 "usage.ask.body" = "Ámbarは1日に1回、各機能を使った回数、バージョン、言語を送信できます。コピーした内容や音声入力した内容は決して送信しません。設定でいつでも変更できます。";
 "usage.ask.yes" = "統計を共有";
 "usage.ask.no" = "共有しない";
+
+/* Updates */
+"updates.section" = "アップデート";
+"updates.toggle" = "アップデートを自動的に確認";
+"updates.check_now" = "今すぐ確認";
+"updates.checking" = "確認中…";
+"updates.failed" = "確認できませんでした。接続を確認してください。";
+"updates.current %@" = "現在のバージョンは %@ です。";
+"updates.available %@" = "新しいバージョンがあります：%@";
+"updates.install" = "今すぐアップデート";
+"menu.update %@" = "Ámbar を %@ にアップデート";
+"menu.update.skip" = "このバージョンをスキップ";
+"update.alert.title %@" = "Ámbar の新しいバージョンがあります：%@";
+"update.alert.body" = "ダウンロードして作者の署名を確認し、Ámbar を再起動します。履歴はそのまま残ります。";
+"update.alert.install" = "アップデート";
+"update.alert.later" = "後で";

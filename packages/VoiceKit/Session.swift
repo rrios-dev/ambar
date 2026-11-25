@@ -25,6 +25,10 @@ public enum DictationFailure: String, Sendable, Equatable, CaseIterable {
     case permissionDenied
     /// El modelo del idioma dejó de estar disponible.
     case modelUnavailable
+    /// The system answers "model missing" for a model this process has already seen
+    /// installed: it refreshed its speech assets underneath the running app, and only
+    /// a new process sees them again. The app restarts itself; the user dictates again.
+    case speechModelsRefreshed
     /// El dispositivo de entrada cambió a mitad de sesión y el formato negociado
     /// dejó de valer. No se intenta continuar con un formato inválido.
     case audioDeviceChanged

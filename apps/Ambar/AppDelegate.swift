@@ -72,6 +72,72 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             Paster.requestAccessibilityPermission()
         }
         startUsageReports(askNow: !presentsOnboarding && !suppressesPrompts)
+        startUpdates()
+    }
+
+    // MARK: - Updates
+
+    /// Checks the public repository at launch, every hour (it asks the network at most
+    /// every four) and on waking. Debug builds only check when asked to, so a build under
+    /// test never offers to replace itself with the published release.
+    private func startUpdates() {
+        model.updates.onChange = { [weak self] in
+            guard let self else { return }
+            self.statusItem?.menu = self.buildMenu()
+            self.offerUpdateIfNew()
+        }
+        #if DEBUG
+        guard ProcessInfo.processInfo.environment["AMBAR_CHECK_UPDATES"] != nil else { return }
+        #endif
+        model.updates.start()
+    }
+
+    /// Says once per version that a newer Ámbar exists. Never while dictating, during the
+    /// first-run tour or in an automated run: the menu keeps the item, and the next check
+    /// says it then.
+    private func offerUpdateIfNew() {
+        guard model.updates.available != nil, !model.updates.isInstalling, !isDictating,
+              !suppressesPrompts, onboarding?.windowForReview?.isVisible != true,
+              let update = model.updates.check.takeNotice() else { return }
+        NSApp.activate()
+        let alert = NSAlert()
+        alert.messageText = String(localized: "update.alert.title \(update.version)", bundle: .localized)
+        alert.informativeText = String(localized: "update.alert.body", bundle: .localized)
+        alert.addButton(withTitle: String(localized: "update.alert.install", bundle: .localized))
+        alert.addButton(withTitle: String(localized: "update.alert.later", bundle: .localized))
+        alert.addButton(withTitle: String(localized: "menu.update.skip", bundle: .localized))
+        switch alert.runModal() {
+        case .alertFirstButtonReturn: installUpdate()
+        case .alertThirdButtonReturn: model.updates.skip()
+        default: break
+        }
+    }
+
+    @objc private func installUpdate() {
+        guard !isDictating else { return }
+        Task { await model.updates.install() }
+    }
+
+    @objc private func skipUpdate() {
+        model.updates.skip()
+    }
+
+    /// The update, first in the menu: whoever opens it should see it before anything else.
+    private func addUpdateItems(to menu: NSMenu) {
+        guard let update = model.updates.available else { return }
+        let item = NSMenuItem(
+            title: String(localized: "menu.update \(update.version)", bundle: .localized),
+            action: #selector(installUpdate), keyEquivalent: "")
+        item.target = self
+        item.image = NSImage(systemSymbolName: "arrow.down.circle", accessibilityDescription: nil)
+        item.isEnabled = !model.updates.isInstalling
+        menu.addItem(item)
+        let skip = NSMenuItem(title: String(localized: "menu.update.skip", bundle: .localized),
+                              action: #selector(skipUpdate), keyEquivalent: "")
+        skip.target = self
+        skip.indentationLevel = 1
+        menu.addItem(skip)
+        menu.addItem(.separator())
     }
 
     /// Counts the launch (kept only after a yes), asks once a few seconds after a launch that
@@ -288,6 +354,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             menu.addItem(warning)
             menu.addItem(.separator())
         }
+        addUpdateItems(to: menu)
 
         let open = NSMenuItem(
             title: String(localized: "menu.open", bundle: .localized),

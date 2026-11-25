@@ -115,6 +115,50 @@ final class AppModel {
         AppRelocation.relaunch(at: Bundle.main.bundleURL) { NSApp.terminate(nil) }
     }
 
+    /// This process has read the dictation model as installed at least once.
+    ///
+    /// It is what tells a model that went missing from one the system stopped showing
+    /// to a running app: the system refreshes its speech asset catalog in the background
+    /// (seen 2026-11-25 at 08:02, with Ámbar running since the day before), and from then
+    /// on every dictation answered "Falta el modelo de voz" until Ámbar was quit and
+    /// opened again. A new process sees the model; this one never does again.
+    private(set) var hasSeenSpeechModelInstalled = false
+
+    /// How Ámbar restarts when the speech model went stale. Injectable for tests.
+    var restartForStaleSpeechModel: @MainActor () -> Void = {
+        AppRelocation.relaunch(at: Bundle.main.bundleURL) { NSApp.terminate(nil) }
+    }
+
+    /// The minimum time between two automatic restarts, so a model that a fresh process
+    /// also reads as missing ends in the plain message instead of a restart loop.
+    static let staleSpeechModelRestartCooldown: TimeInterval = 10 * 60
+
+    /// The pause before restarting: enough for the banner, and VoiceOver, to say why.
+    static let staleSpeechModelRestartDelay: Duration = .milliseconds(2500)
+
+    /// The dictation engine answered "model missing" after its own resync. When this
+    /// process has seen the model installed, the answer is stale: Ámbar restarts itself,
+    /// which is what the user was doing by hand, and returns `true`.
+    func recoverStaleSpeechModel(now: Date = .now) -> Bool {
+        guard hasSeenSpeechModelInstalled else { return false }
+        if let last = settings.lastStaleModelRestart,
+           now.timeIntervalSince(last) < Self.staleSpeechModelRestartCooldown {
+            return false
+        }
+        settings.lastStaleModelRestart = now
+        let restart = restartForStaleSpeechModel
+        Task { @MainActor in
+            try? await Task.sleep(for: Self.staleSpeechModelRestartDelay)
+            restart()
+        }
+        return true
+    }
+
+    /// Marks the model as seen installed without touching the system catalog. Tests only.
+    func markSpeechModelSeenInstalledForTesting() {
+        hasSeenSpeechModelInstalled = true
+    }
+
     /// El ⌘V sintético no llegó a enviarse, con el permiso concedido.
     ///
     /// Pasa cuando el sistema rechaza el evento pese a que `AXIsProcessTrusted()` dice que sí
@@ -335,6 +379,7 @@ final class AppModel {
         // podía comprobarla y —peor— dos consultas seguidas podían soltar la reserva
         // de una sesión que acababa de empezar.
         let availability = await catalog.availability(forLocale: locale)
+        if availability == .installed { hasSeenSpeechModelInstalled = true }
         if availability == .supported,
            let bytes = await catalog.installationSize(forLocale: locale) {
             dictationModelSize = ByteCountFormatter.string(
@@ -694,6 +739,7 @@ final class AppModel {
             atypicalSpeech: { [weak settings] in settings?.isAtypicalSpeechEnabled ?? false },
             // El gesto solo arma si el dictado puede funcionar de verdad. Ver `isReady`.
             isReady: { [weak self] in self?.dictationCanRun ?? false },
+            recoverStaleModel: { [weak self] in self?.recoverStaleSpeechModel() ?? false },
             vocabulary: personalDictionary,
             learnsVocabulary: { [weak settings] in settings?.isDictionaryLearningEnabled ?? true }
         )
@@ -865,9 +911,30 @@ final class AppModel {
     /// Usage statistics, only after the user's yes (`AmbarUsage`).
     let usage: UsageReport
 
-    init(settings: Settings = Settings(), usage: UsageReport? = nil) {
+    /// Newer releases of Ámbar, from its public repository, installed in one click.
+    /// Ámbar shipped 1.2, 1.3 and 1.4 without a way to hear of them; this is that way.
+    let updates: UpdateCoordinator
+
+    /// The version this process runs, as the releases are tagged ("1.4.0").
+    static var runningVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0"
+    }
+
+    /// The Developer ID team every Ámbar release is signed with; a disk image signed by
+    /// anyone else is never installed.
+    static let teamIdentifier = "Q4VZ9ZK2TS"
+
+    init(settings: Settings = Settings(), usage: UsageReport? = nil, updates: UpdateCoordinator? = nil) {
         self.settings = settings
         self.usage = usage ?? AmbarUsage.makeReport()
+        self.updates = updates ?? UpdateCoordinator(
+            // Every four hours, as Quill (its J-20): once a day left people a version behind.
+            check: UpdateCheck(repository: "rrios-dev/ambar", currentVersion: Self.runningVersion,
+                               interval: 4 * 3600),
+            expectation: .init(bundleIdentifier: Bundle.main.bundleIdentifier ?? "dev.rrios.ambar",
+                               teamIdentifier: Self.teamIdentifier,
+                               currentVersion: Self.runningVersion)
+        )
         self.personalDictionary = PersonalDictionary(
             directory: Self.applicationSupportDirectory()
         )

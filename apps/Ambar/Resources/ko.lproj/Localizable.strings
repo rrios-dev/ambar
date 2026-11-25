@@ -161,6 +161,7 @@
 "menu.pause_remaining" = "일시 중지 %lld분 남음";
 "dictation.failed.permission" = "Ámbar에 마이크 권한이 없습니다.";
 "dictation.failed.model" = "음성 모델이 없습니다.";
+"dictation.failed.models_refreshed" = "시스템이 음성 모델을 업데이트했습니다. Ámbar를 다시 시작합니다. 잠시 후 다시 받아쓰기하십시오.";
 "dictation.failed.device" = "음성 입력 중에 마이크가 바뀌었습니다.";
 "dictation.discard" = "버리기";
 "dictation.failed.no_speech" = "아무 소리도 들리지 않았습니다. 마이크를 확인한 뒤 다시 시도하세요.";
@@ -260,3 +261,19 @@
 "usage.ask.body" = "Ámbar는 하루에 한 번 각 기능을 사용한 횟수, 버전, 언어를 보낼 수 있습니다. 복사하거나 받아쓴 내용은 절대 보내지 않습니다. 설정에서 언제든지 바꿀 수 있습니다.";
 "usage.ask.yes" = "통계 공유";
 "usage.ask.no" = "공유 안 함";
+
+/* Updates */
+"updates.section" = "업데이트";
+"updates.toggle" = "업데이트 자동 확인";
+"updates.check_now" = "지금 확인";
+"updates.checking" = "확인 중…";
+"updates.failed" = "확인할 수 없습니다. 연결을 확인하십시오.";
+"updates.current %@" = "현재 버전은 %@입니다.";
+"updates.available %@" = "새 버전이 있습니다: %@";
+"updates.install" = "지금 업데이트";
+"menu.update %@" = "Ámbar를 %@(으)로 업데이트";
+"menu.update.skip" = "이 버전 건너뛰기";
+"update.alert.title %@" = "Ámbar의 새 버전이 있습니다: %@";
+"update.alert.body" = "다운로드하여 작성자의 서명을 확인한 뒤 Ámbar를 다시 시작합니다. 기록은 그대로 유지됩니다.";
+"update.alert.install" = "업데이트";
+"update.alert.later" = "나중에";

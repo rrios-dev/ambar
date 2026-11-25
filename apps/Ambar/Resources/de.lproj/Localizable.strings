@@ -161,6 +161,7 @@
 "menu.pause_remaining" = "Noch %lld Min. Pause";
 "dictation.failed.permission" = "Ámbar hat keine Mikrofonberechtigung.";
 "dictation.failed.model" = "Das Sprachmodell fehlt.";
+"dictation.failed.models_refreshed" = "Das System hat sein Sprachmodell aktualisiert. Ámbar startet neu – diktiere gleich noch einmal.";
 "dictation.failed.device" = "Das Mikrofon hat mitten im Diktat gewechselt.";
 "dictation.discard" = "Verwerfen";
 "dictation.failed.no_speech" = "Es war nichts zu hören. Prüfe das Mikrofon und versuche es erneut.";
@@ -260,3 +261,19 @@
 "usage.ask.body" = "Ámbar kann einmal am Tag senden, wie oft du jede Funktion genutzt hast, die Version und deine Sprache. Nie, was du kopierst oder diktierst. Du kannst das jederzeit in den Einstellungen ändern.";
 "usage.ask.yes" = "Statistik teilen";
 "usage.ask.no" = "Nein, danke";
+
+/* Updates */
+"updates.section" = "Updates";
+"updates.toggle" = "Automatisch nach Updates suchen";
+"updates.check_now" = "Jetzt prüfen";
+"updates.checking" = "Wird geprüft …";
+"updates.failed" = "Prüfung nicht möglich. Prüfe deine Verbindung.";
+"updates.current %@" = "Du hast Version %@.";
+"updates.available %@" = "Eine neue Version ist verfügbar: %@.";
+"updates.install" = "Jetzt aktualisieren";
+"menu.update %@" = "Ámbar auf %@ aktualisieren";
+"menu.update.skip" = "Diese Version überspringen";
+"update.alert.title %@" = "Eine neue Version von Ámbar ist verfügbar: %@";
+"update.alert.body" = "Sie wird geladen, auf ihren Autor geprüft, und Ámbar startet damit neu. Dein Verlauf bleibt unverändert.";
+"update.alert.install" = "Aktualisieren";
+"update.alert.later" = "Später";
